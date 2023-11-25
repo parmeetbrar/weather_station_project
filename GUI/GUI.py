@@ -1,3 +1,17 @@
+#######################################################################################################################
+
+# Project: Weather Station Project
+# File: Graphical User Interface (GUI)
+
+# Author: Parmeet Brar
+# Purpose:       
+# Description: 
+# Date last edited: 11/24/2023
+
+#######################################################################################################################
+
+# Imports
+
 from tkinter import Tk, Label, Scale, HORIZONTAL, LabelFrame, Button, StringVar, IntVar, Canvas
 from PIL import Image, ImageTk
 import random
