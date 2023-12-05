@@ -15,8 +15,8 @@
 class Sensor:
 	'''
 	Purpose:    Create a base class for all type of sensor
-	Arguments:  Name of the sensor
 	'''
+	# Constructor
 	def __init__(self,name):
 		# Sensor name
 		self.name = name
