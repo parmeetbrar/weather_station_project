@@ -15,7 +15,7 @@ Importing external libraries
 
 """
 import tensorflow as tf
-
+#*********************************************************************************************************************************
 
 class ModelConverter:
     """
@@ -67,6 +67,7 @@ class ModelConverter:
             f.write(self.tflite_model)
         print(f"TFLite model saved to {self.tflite_model_path}")
 
+#*********************************************************************************************************************************
 # Usage
 keras_model_path = r'C:\Users\ASUS\Desktop\cloud_image_model.h5'
 tflite_model_path = r'C:\Users\ASUS\Desktop\cloud_image_model.tflite'
@@ -75,3 +76,5 @@ converter = ModelConverter(keras_model_path, tflite_model_path)
 converter.load_model()
 converter.convert_to_tflite()
 converter.save_tflite_model()
+
+#*********************************************************************************************************************************
