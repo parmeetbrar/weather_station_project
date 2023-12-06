@@ -19,6 +19,7 @@ import numpy as np
 from keras.preprocessing import image
 import os
 
+#*********************************************************************************************************************************
 
 class CloudImageClassifier:
     """ 
@@ -143,6 +144,8 @@ class CloudImageClassifier:
         """        
         self.model.save(self.model_save_path)
 
+#*********************************************************************************************************************************
+
 # Using the class
 classifier = CloudImageClassifier(
     train_dir=r'D:\UBC Term 1\MECH 524\Assignments\weather_station_files\cloud_dataset\cloud_training_set',
@@ -156,3 +159,5 @@ classifier.train_model()
 classifier.evaluate_model()
 classifier.predict()
 classifier.save_model()
+
+#*********************************************************************************************************************************
