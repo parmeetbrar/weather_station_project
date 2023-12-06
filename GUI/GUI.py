@@ -92,8 +92,14 @@ root = Tk()
 root.title("Climate Control GUI")
 root.geometry("800x600")  # Set the window size
 
+# Row and Column configuration for resizing
+root.grid_rowconfigure(0, weight=1)
+root.grid_rowconfigure(1, weight=1)
+root.grid_columnconfigure(0, weight=1)
+root.grid_columnconfigure(1, weight=1)
+
 # Define the file path for the weather symbols
-base_folder = "C:/Users/Parmeet Brar/Desktop/MECH 524/weather_station_project"
+base_folder = r"C:\Users\ASUS\Desktop\GUI"
 
 # Load weather condition symbols using PIL
 weather_images = {
@@ -117,6 +123,12 @@ current_temp_var = StringVar()
 outdoor_frame = LabelFrame(root, text="OUTDOOR", font=("Helvetica", 16), padx=10, pady=10)
 outdoor_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
 
+# Configure the interior of the frames for resizing
+for i in range(5):  # Assuming a maximum of 5 rows in any frame
+    outdoor_frame.grid_rowconfigure(i, weight=1)
+outdoor_frame.grid_columnconfigure(0, weight=1)
+outdoor_frame.grid_columnconfigure(1, weight=1)
+
 # Outdoor data labels
 Label(outdoor_frame, text="Temperature (°C):").grid(row=0, column=0, sticky="e")
 Label(outdoor_frame, textvariable=outdoor_temp_var, width=20).grid(row=0, column=1, sticky="w")
@@ -133,11 +145,17 @@ Label(outdoor_frame, textvariable=outdoor_pressure_var, width=20).grid(row=3, co
 # Weather condition symbol labels
 weather_labels = [Label(outdoor_frame) for _ in range(3)]
 for i, label in enumerate(weather_labels):
-    label.grid(row=4, column=i, pady=10)
-
+    label.grid(row=4, column=i, pady=10, sticky="w")
+    
 # Indoor frame
 indoor_frame = LabelFrame(root, text="INDOOR", font=("Helvetica", 16), padx=10, pady=10)
 indoor_frame.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
+
+# Configure the interior of the indoor frame for resizing
+for i in range(7):  # Assuming a maximum of 7 rows in the indoor frame
+    indoor_frame.grid_rowconfigure(i, weight=1)
+indoor_frame.grid_columnconfigure(0, weight=1)
+indoor_frame.grid_columnconfigure(1, weight=1)
 
 # Indoor temperature display and slider
 Label(indoor_frame, text="Current Temperature:").grid(row=0, column=0, sticky="e")
@@ -155,18 +173,22 @@ for i, text in enumerate(toggle_texts):
 
 # Image display frame for camera image
 image_frame = LabelFrame(root, text="Camera Image", font=("Helvetica", 16), padx=10, pady=10)
-image_frame.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+image_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
+
+# Configure the interior of the image frame for resizing
+image_frame.grid_rowconfigure(0, weight=1)
+image_frame.grid_columnconfigure(0, weight=1)
 
 # Placeholder for the camera image
 camera_canvas = Canvas(image_frame, width=760, height=240, bg='light blue')
-camera_canvas.grid(row=0, column=0, columnspan=2)
+camera_canvas.grid(row=0, column=0, columnspan=2, sticky="nsew")
 
 # Display placeholder text for camera image, you would update this with an actual image
 camera_canvas.create_text(380, 120, text="Camera Image Placeholder", font=("Helvetica", 16))
 
 # Refresh button to update data with random values
 refresh_button = Button(root, text="Refresh Data", command=refresh_data)
-refresh_button.grid(row=2, column=0, columnspan=2, pady=10)
+refresh_button.grid(row=2, column=0, columnspan=2, sticky="ew", pady=10)
 
 # Initialize outdoor data with random values
 refresh_data()  # Call once to populate with initial random data
