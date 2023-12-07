@@ -28,7 +28,7 @@ class AirQualitySensor(Sensor):
     def __init__(self, name, input_channel):
         '''
         Constructor method for AirQualitySensor class.
-        Args: name: Name of the sensor (str)
+        Args: name: name: Name of the sensor (str)
                     input_channel: MCP3008 input channel (int)
         '''
         super().__init__(name)
@@ -38,7 +38,7 @@ class AirQualitySensor(Sensor):
     def read_sensor_data(self):
         '''
         Get the air quality sensor reading.
-        Returns: Air quality reading (float) rounded to four decimal places
+        Returns: air_quality_sensor.value: Air quality reading (float) rounded to four decimal places
         '''
         input_channel = 0
         air_quality_sensor = MCP3008(channel=input_channel)
