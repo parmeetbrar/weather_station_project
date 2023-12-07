@@ -1,18 +1,19 @@
 #######################################################################################################################
 
-# Project: Weather Station Project
-# File: air_quality
+# Project:          Weather Station Project
+# File:             air_quality.py
 
-# Author: Parmeet Brar
-# Purpose: To measure air quality using Adafruit Industries 3199 sensor       
-# Description: This script reads the analog voltage off of the output pin of the sensor and converts it to ppm 
-#              values for each gas. It then prints the ppm values for each gas to the console.
-# Date last edited: 2023/12/6
+# Author:           Parmeet Brar
+# Purpose:          To measure air quality using Adafruit Industries 3199 sensor       
+# Description:      This script reads the analog voltage off of the output pin of the sensor and converts it to ppm 
+#                   values for each gas. It then prints the ppm values for each gas to the console.
+# Date last edited: 2023/12/7
 
 #######################################################################################################################
 
 # Imports
 import time
+# Imported ATD convertor class from gpiozero
 from gpiozero import MCP3008
 # Import the Sensor Class as parent class
 from sensor import Sensor
@@ -28,7 +29,7 @@ class AirQualitySensor(Sensor):
         '''
         Constructor method for AirQualitySensor class.
         Args: name: Name of the sensor (str)
-              input_channel: MCP3008 input channel (int)
+                    input_channel: MCP3008 input channel (int)
         '''
         super().__init__(name)
         self.input_channel = input_channel
