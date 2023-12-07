@@ -23,7 +23,7 @@ radius_cm = 1.125 # Depends on radius of rotating magnet
 wind_interval = 5  # How often to report speed
 reed_switch_pin = 17  # GPIO pin number for the reed switch
 
-# Functions 
+# Classes
 class Anemometer(Sensor):
     '''Anemometer class, child class of Sensor class for reading wind speed using a reed switch'''
 
@@ -78,9 +78,7 @@ class Anemometer(Sensor):
 
 # Functions
 def main():
-    '''
-    main mathod for testing the sesnor. This will likely not be used in final application
-    '''
+    '''main mathod for testing the sesnor. This will likely not be used in final application'''
     anemometer = Anemometer("Anemometer", radius_cm, wind_interval, reed_switch_pin)
     try:
         while True:
