@@ -7,7 +7,7 @@
 # Purpose: This code is for reading wind speed using an anemometer   
 # Description: The code takes input from a reed switch which is implimneted as a button and outputs the wind speed
 #              in km/h
-# Date last edited: 2023-12-6
+# Date last edited: 2023/12/6
 
 #######################################################################################################################
 
