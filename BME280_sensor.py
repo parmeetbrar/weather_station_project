@@ -1,20 +1,18 @@
 #######################################################################################################################
 
 # Project:			Weather Station Project
-# File: 			BME280_sensor.py
+# File:				BME280_sensor.py
 #
-# Author: 			Ho Wun Ng
-# Purpose: 			Create the BME280SensorI2C Class, read data from the sensor with I2C connection
+# Author:			Ho Wun Ng
+# Purpose:			Create the BME280SensorI2C Class, read data from the sensor with I2C connection
 # Description:		Initialize the BME280 sensors, create a function for sending sensor humidity,
 #					pressure and temperature Data
-# Date last edited: 2023/12/5
+# Date last edited:	2023/12/5
 
 #######################################################################################################################
 
 # Imports
-# Python time module
 import time
-# python smbus module
 import smbus2
 # BME280 sensor I2C communication module
 import bme280
@@ -38,15 +36,24 @@ class BME280SensorI2C(Sensor):
 		self.__com_params = com_params
 	
 	def get_bus(self):
-		'''Get the I2C bus'''
+		'''
+		Get the I2C bus
+		Return: The sensor I2C bus number (int)
+		'''
 		return self.__bus
 	
 	def get_address(self):
-		'''Get the Sensor I2C Address'''
+		'''
+		Get the Sensor I2C Address
+		Return: The sensor I2C address (int)
+		'''
 		return self.__address
 	
 	def get_params(self):
-		'''Get the Sensor I2C parameters'''
+		'''
+		Get the Sensor I2C parameters
+		Return: The sensor compensation parameter (params)
+		'''
 		return self.__com_params
 	
 	def get_sensor_data(self):
@@ -72,7 +79,7 @@ class BME280SensorI2C(Sensor):
 # Functions
 def BME280_init():
 	'''
-	Purpose:	To initialize the indoor and outdoor sensor and create the BME280Sensor class for each one.
+	To initialize the indoor and outdoor sensor and create the BME280Sensor class for each one.
 	Return:		A vector with two BME280Sensor class object, one for outdoor and indoor
 	'''
 	port = 1
@@ -92,10 +99,7 @@ def BME280_init():
 
 # For testing purposes
 def main():
-	'''
-	Purpose:	create a function for testing the BME280 sensor
-	Return:		None
-	'''
+	'''Create a function for testing the BME280 sensor'''
 	# 1. Outdoor sensor 2. Indoor sensor
 	sensor_vector=BME280_init()
 	# Collecting the data from the two sensors repeatedly every 1 second
