@@ -23,6 +23,7 @@ import cv2
 import numpy as np
 import os
 import glob
+import RPi.GPIO as GPIO
 
 #*********************************************************************************************************************************
 
@@ -92,13 +93,61 @@ class Camera:
         self.timed_thread.join()
 
 class DayAndNightAnalyzer(Camera):
-    
+    """ 
+    Class Definition: DayandNightAnalyzer
+    A class which analyzes images and concludes if it's day or night
+    """  
+
+    def __init__(self, picture_interval_seconds):
+        """
+        Constructor: Initializes the picture interval method from the parent class and GPIO setup
+        Arguments: self, picture_interval_seconds
+        Access: Public
+        """          
+        super().__init__(picture_interval_seconds)
+        self.setup_gpio()
+
+    def setup_gpio(self):
+        """
+        Method: setup_gpio
+        Initializes GPIO pin 17 as output with Pulse Width Modulation (PWM) on RaspberryPi
+        Arguments: self
+        Access: Public
+        """ 
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(17, GPIO.OUT)
+        self.pwm = GPIO.PWM(17, 100)
+
+        # Start with LED off
+        self.pwm.start(0) 
+   
     def analyze_image(self, filename):
+        """
+        Method: analyze_image
+        Analyzes brightness of images after converting them to greyscale
+        Arguments: self, filename
+        Access: Public
+        return: Average brightness of the image
+        """         
         image = cv2.imread(filename)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         avg_brightness = np.mean(gray)
+
+        # LED PWM Configuration
+        duty_cycle = max(0, min(100,100 - avg_brightness))
+        self.pwm.ChangeDutyCycle(duty_cycle)
         return avg_brightness
 
+    def stop_timed_pictures(self):
+        """
+        Method: stop_timed_pictures
+        Stops the time interval of taking pictures. Stops PWM and cleans GPIO configuration
+        Arguments: self
+        Access: Public
+        """   
+        super().stop_timed_pictures
+        self.pwm.stop()
+        GPIO.cleanup()
 
 #*********************************************************************************************************************************
 
@@ -107,18 +156,18 @@ if __name__ == "__main__":
     camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds=60)
     camera_analyzer.start_timed_pictures()
 
-    time.sleep(10)
-
-    image_files = glob.glob("/home/Pi/Pictures/day_night/*.jpg")
-    if image_files:
-        latest_image = max(image_files, key=os.path.getctime)
-        brightness = camera_analyzer.analyze_image(latest_image)
-
-        if brightness > 60:
-            print("Day!")
-        else:
-            print("Night")
-    else:
-        print("No image found")
+    try:
+        while True:
+            time.sleep(10)
+            image_files = glob.glob("/home/Pi/Pictures/day_night/*.jpg")
+            if image_files:
+                latest_image = max(image_files, key=os.path.getctime)
+                brightness = camera_analyzer.analyze_image(latest_image)
+                print(f"Brightness: {brightness}")
+            else:
+                print("No image found")
+    except KeyboardInterrupt:
+        print("Exit")
+        camera_analyzer.stop_timed_pictures()
     
 #*********************************************************************************************************************************
