@@ -19,6 +19,10 @@ import subprocess
 import time
 import datetime
 import threading
+import cv2
+import numpy as np
+import os
+import glob
 
 #*********************************************************************************************************************************
 
@@ -45,8 +49,8 @@ class Camera:
         Access: Public
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"/home/pi/Pictures/data_for_pi/prediction/image_{timestamp}.jpg"
-        command = f"raspistill -o {filename}"
+        filename = f"/home/Pi/Pictures/day_night/image_{timestamp}.jpg"
+        command = f"libcamera-still -o {filename}"
         try:
             subprocess.run(command, shell=True, check=True)
             print(f"Picture Taken: {filename}")
@@ -87,31 +91,34 @@ class Camera:
         self.running = False
         self.timed_thread.join()
 
-    def user_input(self):
-        """
-        Method: user_input
-        Handle User Input for manual picture taking or to exit the program
-        Arguments: self
-        Access: Public
-        """           
-        print("Type '1' to take a picture immediately, or '0' to stop the program.")
-        try:
-            while True:
-                user_input = input().strip().lower()
-                if user_input == '1':
-                    self.take_picture()
-                elif user_input == '0':
-                    self.stop_timed_pictures()
-                    break
-        except KeyboardInterrupt:
-            print("Program stopped")
-            self.stop_timed_pictures()
+class DayAndNightAnalyzer(Camera):
+    
+    def analyze_image(self, filename):
+        image = cv2.imread(filename)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        avg_brightness = np.mean(gray)
+        return avg_brightness
+
 
 #*********************************************************************************************************************************
 
 # Usage
-camera = Camera(picture_interval_seconds=3600)
-camera.start_timed_pictures()
-camera.user_input()
+if __name__ == "__main__":
+    camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds=60)
+    camera_analyzer.start_timed_pictures()
+
+    time.sleep(10)
+
+    image_files = glob.glob("/home/Pi/Pictures/day_night/*.jpg")
+    if image_files:
+        latest_image = max(image_files, key=os.path.getctime)
+        brightness = camera_analyzer.analyze_image(latest_image)
+
+        if brightness > 60:
+            print("Day!")
+        else:
+            print("Night")
+    else:
+        print("No image found")
     
 #*********************************************************************************************************************************
