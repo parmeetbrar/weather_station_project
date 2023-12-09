@@ -40,8 +40,8 @@ class CloudImageClassifier:
 
     def preprocess_data(self):
         """
-        Method: Uploads the data into training and testing sets with augmentation and splitting
-        Arguments: self
+        Method:     Uploads the data into training and testing sets with augmentation and splitting
+        Arguments:  self
 
         """
         # Data augmentation and split for training and validation sets
@@ -73,8 +73,8 @@ class CloudImageClassifier:
         
     def cnn_model(self):
         """
-        Method: Creates and compiles the CNN model for sky conditions classification
-        Arguments: self
+        Method:     Creates and compiles the CNN model for sky conditions classification
+        Arguments:  self
 
         """
         # Initialising
@@ -92,7 +92,7 @@ class CloudImageClassifier:
 
     def train_model(self, epochs=15):
         """
-        Method: Trains the CNN model with specified number of epochs
+        Method:     Trains the CNN model with specified number of epochs
         Arguments:  self
                     epochs=15: Number of times the model will run and train itself
 
@@ -101,8 +101,8 @@ class CloudImageClassifier:
 
     def evaluate_model(self):
         """
-        Method: Evaluates and displays model performance based on the test set
-        Arguments: self
+        Method:     Evaluates and displays model performance based on the test set
+        Arguments:  self
         
         """
         test_accuracy = self.model.evaluate(self.test_set)
@@ -111,8 +111,8 @@ class CloudImageClassifier:
 
     def predict(self):
         """
-        Method: Predicts sky conditions using new images
-        Arguments: self
+        Method:     Predicts sky conditions using new images
+        Arguments:  self
         
         """
         for img in os.listdir(self.prediction_dir):
@@ -130,8 +130,8 @@ class CloudImageClassifier:
 
     def save_model(self):
         """
-        Method: Saves the trained model to a specified path in .h5 format
-        Arguments: self
+        Method:     Saves the trained model to a specified path in .h5 format
+        Arguments:  self
         
         """        
         self.model.save(self.model_save_path)
