@@ -6,7 +6,7 @@
 # Author:       Priyanshu Bhateja
 # Purpose:      A Convolutional Neural Network Model built as a machine learning model to identify sky conditions. 
 # Description:  The model uses CNN machine learning method to determine whether the sky is clear, cloudy or rainy.
-# Date Edited:  20-11-2023
+# Date Edited:  2023/11/20
 
 ##################################################################################################################################
 
@@ -25,7 +25,7 @@ class CloudImageClassifier:
     
     def __init__(self, train_dir, test_dir, prediction_dir, model_save_path):
         """
-        Contructor: Initializes the classifier model with directory paths and model save paths
+        Constructor method to initialize the classifier model with directory paths and model save paths
         Arguments:  train_dir (str):        Directory for training data
                     test_dir (str):         Directory for test data
                     prediction_dir (str):   Directory for prediction images for making predictions
@@ -40,7 +40,7 @@ class CloudImageClassifier:
 
     def preprocess_data(self):
         """
-        Method:     Uploads the data into training and testing sets with augmentation and splitting
+        Method to upload the data into training and testing sets with augmentation and splitting
         Arguments:  self
 
         """
@@ -73,7 +73,7 @@ class CloudImageClassifier:
         
     def cnn_model(self):
         """
-        Method:     Creates and compiles the CNN model for sky conditions classification
+        Method to create and compile the CNN model for sky conditions classification
         Arguments:  self
 
         """
@@ -92,7 +92,7 @@ class CloudImageClassifier:
 
     def train_model(self, epochs=15):
         """
-        Method:     Trains the CNN model with specified number of epochs
+        Method to train the CNN model with specified number of epochs
         Arguments:  self
                     epochs=15: Number of times the model will run and train itself
 
@@ -101,7 +101,7 @@ class CloudImageClassifier:
 
     def evaluate_model(self):
         """
-        Method:     Evaluates and displays model performance based on the test set
+        Method to evaluate and display model performance based on the test set
         Arguments:  self
         
         """
@@ -111,7 +111,7 @@ class CloudImageClassifier:
 
     def predict(self):
         """
-        Method:     Predicts sky conditions using new images
+        Method to predict sky conditions using new images
         Arguments:  self
         
         """
@@ -130,13 +130,12 @@ class CloudImageClassifier:
 
     def save_model(self):
         """
-        Method:     Saves the trained model to a specified path in .h5 format
+        Method to save the trained model to a specified path in .h5 format
         Arguments:  self
         
         """        
         self.model.save(self.model_save_path)
 
-##################################################################################################################################
 
 # Using the class
 classifier = CloudImageClassifier(
@@ -152,5 +151,4 @@ classifier.evaluate_model()
 classifier.predict()
 classifier.save_model()
 
-##################################################################################################################################
 ######################################################## End of code #############################################################

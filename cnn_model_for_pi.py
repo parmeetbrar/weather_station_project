@@ -7,7 +7,7 @@
 # Purpose:      A program that runs the CNN model that is compatible with Raspberry Pi
 # Description:  The program allows the Raspberry Pi to run the CNN model in full compatibility, and allows the model to predict sky 
 #               conditions
-# Date Edited:  28-11-2023
+# Date Edited:  2023/11/28
 
 ##################################################################################################################################
 
@@ -25,7 +25,7 @@ class RaspiPredictor:
 
     def __init__(self, model_path):
         """
-        Contructor: Initializes the predictor with the TensorFlow Lite model path.
+        Contructor method to initialize the predictor with the TensorFlow Lite model path.
         Arguments:  self
                     model_path (str): Path to the TensorFlow Lite model file.
 
@@ -41,7 +41,7 @@ class RaspiPredictor:
 
     def load_image(self, img_path, target_size=(64, 64)):
         """
-        Method:     Load and process an image from a given path.
+        Method to load and process an image from a given path.
         Arguments:  self
                     img_path (str): Path to the image file.
                     target_size (tuple): Target size to resize the image.
@@ -59,7 +59,7 @@ class RaspiPredictor:
 
     def predict_image(self, img_path):
         """
-        Method:     Predict the class of an image using the loaded TensorFlow Lite model.
+        Method to predict the class of an image using the loaded TensorFlow Lite model.
         Arguments:  self
                     img_path (str): Path to the image file.
         Returns:    str: Predicted category of the image.
@@ -84,7 +84,7 @@ class RaspiPredictor:
 
     def predict_images_in_directory(self, directory_path):
         """
-        Method:     Predict the classes of all images in a specified directory.
+        Method to predict the classes of all images in a specified directory.
 
         Arguments:  self
                     directory_path (str): Path to the directory containing images.
@@ -94,7 +94,6 @@ class RaspiPredictor:
             prediction = self.predict_image(os.path.join(directory_path, img))
             print(f'{img} = {prediction}')
 
-##################################################################################################################################
 
 # Usage
 model_path = '/home/Pi/Desktop/cloud_image_model.tflite'
@@ -104,5 +103,5 @@ predictor = RaspiPredictor(model_path)
 path = '/home/Pi/Pictures/data_for_pi/prediction'
 predictor.predict_images_in_directory(path)
 
-##################################################################################################################################
+
 ######################################################## End of code #############################################################
