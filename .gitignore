@@ -1,7 +1,8 @@
 # Folders
-cloud_test_set/
-cloud_training_set/
-prediction/
+*cloud_test_set/
+*cloud_training_set/
+*prediction/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
