@@ -1,39 +1,36 @@
-#*********************************************************************************************************************************
-# Project: Weather Station Project
-# 
-# Author: Priyanshu Bhateja
-# Date Edited: 28-11-2023
-# File Name: cnn_model_for_pi.py
-# 
-# Purpose: A program that runs the CNN model that is compatible with Raspberry Pi
-#
-# Description: The program allows the Raspberry Pi to run the CNN model in full compatibility, and allows the model to predict sky 
-#              conditions
-#*********************************************************************************************************************************
-#*********************************************************************************************************************************
-"""
-Importing external libraries
+##################################################################################################################################
 
-"""
+# Project:      Weather Station Project
+# File Name:    cnn_model_for_pi.py
+
+# Author:       Priyanshu Bhateja
+# Purpose:      A program that runs the CNN model that is compatible with Raspberry Pi
+# Description:  The program allows the Raspberry Pi to run the CNN model in full compatibility, and allows the model to predict sky 
+#               conditions
+# Date Edited:  28-11-2023
+
+##################################################################################################################################
+
+# Imports
 import numpy as np
 import tflite_runtime.interpreter as tflite
 from PIL import Image
 import os
 
+##################################################################################################################################
+
+# Classes
 class RaspiPredictor:
-    """
-    Class Definition: RaspiPredictor
-    A class for loading a TensorFlow Lite model and performing image predictions.
-    """
+    """ A class for loading a TensorFlow Lite model and performing image predictions """
 
     def __init__(self, model_path):
         """
-        Contructor (__init__): Initializes the predictor with the TensorFlow Lite model path.
-        
-        Arguments:
-        self
-        model_path (str): Path to the TensorFlow Lite model file.
+        Contructor: Initializes the predictor with the TensorFlow Lite model path.
+        Arguments:  self
+                    model_path (str): Path to the TensorFlow Lite model file.
+
         """
+
         # Load TFLite model and allocate tensors
         self.interpreter = tflite.Interpreter(model_path=model_path)
         self.interpreter.allocate_tensors()
@@ -44,17 +41,14 @@ class RaspiPredictor:
 
     def load_image(self, img_path, target_size=(64, 64)):
         """
-        Method: load_image
-        Load and process an image from a given path.
+        Method:     Load and process an image from a given path.
+        Arguments:  self
+                    img_path (str): Path to the image file.
+                    target_size (tuple): Target size to resize the image.
+        Returns:    numpy.ndarray: Processed image array.
 
-        Arguments:
-        self
-        img_path (str): Path to the image file.
-        target_size (tuple): Target size to resize the image.
-
-        Returns:
-        numpy.ndarray: Processed image array.
         """
+
         img = Image.open(img_path)
         img = img.resize(target_size)
         img = np.array(img)
@@ -65,16 +59,13 @@ class RaspiPredictor:
 
     def predict_image(self, img_path):
         """
-        Method: predict_image
-        Predict the class of an image using the loaded TensorFlow Lite model.
+        Method:     Predict the class of an image using the loaded TensorFlow Lite model.
+        Arguments:  self
+                    img_path (str): Path to the image file.
+        Returns:    str: Predicted category of the image.
 
-        Arguments:
-        self
-        img_path (str): Path to the image file.
-
-        Returns:
-        str: Predicted category of the image.
         """
+
         test_image = self.load_image(img_path)
         test_image = np.expand_dims(test_image, axis=0)
         test_image = test_image.astype('float32') / 255.0
@@ -93,16 +84,17 @@ class RaspiPredictor:
 
     def predict_images_in_directory(self, directory_path):
         """
-        Method: predict_images_in_directory
-        Predict the classes of all images in a specified directory.
+        Method:     Predict the classes of all images in a specified directory.
 
-        Arguments:
-        self
-        directory_path (str): Path to the directory containing images.
+        Arguments:  self
+                    directory_path (str): Path to the directory containing images.
+
         """
         for img in os.listdir(directory_path):
             prediction = self.predict_image(os.path.join(directory_path, img))
             print(f'{img} = {prediction}')
+
+##################################################################################################################################
 
 # Usage
 model_path = '/home/Pi/Desktop/cloud_image_model.tflite'
@@ -111,3 +103,6 @@ predictor = RaspiPredictor(model_path)
 # Predicting images in a directory
 path = '/home/Pi/Pictures/data_for_pi/prediction'
 predictor.predict_images_in_directory(path)
+
+##################################################################################################################################
+######################################################## End of code #############################################################

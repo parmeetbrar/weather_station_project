@@ -8,6 +8,7 @@
 # Description:  The program allows the camera module to operate and take pictures in every one hour, and saves the picture with a 
 #               custom time stamp.
 # Date Edited:  28-11-2023
+
 ##################################################################################################################################
 
 #Imports
@@ -25,12 +26,13 @@ import RPi.GPIO as GPIO
 
 #Classes
 class Camera:
-    """    A class which handles manual and timed camera operations for taking pictures """  
+    """ A class which handles manual and timed camera operations for taking pictures """  
 
     def __init__(self, picture_interval_seconds):
         """
-        Contructor : Initializes the camera with a specified interval for timed picture taking
-        Arguments: picture_interval_seconds (float)      
+        Contructor: Initializes the camera with a specified interval for timed picture taking
+        Arguments:  self
+                    picture_interval_seconds (float): Defines interval in seconds      
         """ 
         self.picture_interval_seconds = picture_interval_seconds
 
@@ -39,9 +41,9 @@ class Camera:
 
     def take_picture(self):
         """
-        Method to take a picture and save it with a timestamp
-        Arguments: self
-        Access: Public
+        Method:     Takes a picture and saves it with a timestamp
+        Arguments:  self
+
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"/home/Pi/Pictures/day_night/image_{timestamp}.jpg"
@@ -54,10 +56,9 @@ class Camera:
 
     def timed_picture_taking(self):
         """
-        Method: timed_picture_taking
-        Continuously takes pictures at set intervals
-        Arguments: self
-        Access: Public
+        Method:     Continuously takes pictures at set intervals
+        Arguments:  self
+        
         """
         try:
             while self.running:
@@ -68,47 +69,45 @@ class Camera:
 
     def start_timed_pictures(self):
         """
-        Method: start_timed_pictures
-        Start the timed picture taking in another thread
-        Arguments: self
-        Access: Public
+        Method:     Start the timed picture taking in another thread
+        Arguments:  self
+        
         """        
         self.timed_thread = threading.Thread(target=self.timed_picture_taking)
         self.timed_thread.start()
 
     def stop_timed_pictures(self):
         """
-        Method: stop_timed_pictures
-        Stop the timed picture taking in another thread
-        Arguments: self
-        Access: Public
+        Method:     Stop the timed picture taking in another thread
+        Arguments:  self
+        
         """         
         self.running = False
         self.timed_thread.join()
 
 ##################################################################################################################################
 
+# Classes
 class DayAndNightAnalyzer(Camera):
     """ 
-    Class Definition: DayandNightAnalyzer
+    Inherited Class: DayandNightAnalyzer (Parent Class: Camera)
     A class which analyzes images and concludes if it's day or night
     """  
 
     def __init__(self, picture_interval_seconds):
         """
         Constructor: Initializes the picture interval method from the parent class and GPIO setup
-        Arguments: self, picture_interval_seconds
-        Access: Public
+        Arguments:   self, picture_interval_seconds
+        
         """          
         super().__init__(picture_interval_seconds)
         self.setup_gpio()
 
     def setup_gpio(self):
         """
-        Method: setup_gpio
-        Initializes GPIO pin 17 as output with Pulse Width Modulation (PWM) on RaspberryPi
-        Arguments: self
-        Access: Public
+        Method:     Initializes GPIO pin 17 as output with Pulse Width Modulation (PWM) on RaspberryPi
+        Arguments:  self
+        
         """ 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(17, GPIO.OUT)
@@ -119,11 +118,11 @@ class DayAndNightAnalyzer(Camera):
    
     def analyze_image(self, filename):
         """
-        Method: analyze_image
-        Analyzes brightness of images after converting them to greyscale
-        Arguments: self, filename
-        Access: Public
-        return: Average brightness of the image
+        Method:     Analyzes brightness of images after converting them to greyscale
+        Arguments:  self 
+                    filename: Loads filename from Camera Class
+        Return:     Average brightness of the image
+
         """         
         image = cv2.imread(filename)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -136,14 +135,13 @@ class DayAndNightAnalyzer(Camera):
 
     def stop_timed_pictures(self):
         """
-        Method: stop_timed_pictures
-        Stops the time interval of taking pictures. Stops PWM and cleans GPIO configuration
-        Arguments: self
-        Access: Public
+        Method:     Stops the time interval of taking pictures. Stops PWM and cleans GPIO configuration
+        Arguments:  self
+        
         """   
         super().stop_timed_pictures
-        self.pwm.stop()
-        GPIO.cleanup()
+        self.pwm.stop() # PWM Stoppage
+        GPIO.cleanup() #GPIO Cleanup
 
 ##################################################################################################################################
 

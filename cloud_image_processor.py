@@ -1,37 +1,36 @@
-#*********************************************************************************************************************************
-# Project: Weather Station Project
-# 
-# Author: Priyanshu Bhateja
-# Date Edited: 20-11-2023
-# File Name: cloud_image_processor.py
-# 
-# Purpose: A Convolutional Neural Network Model built as a machine learning model to identify sky conditions. 
-# Description: The model uses CNN machine learning method to determine whether the sky is clear, cloudy or rainy.
-#*********************************************************************************************************************************
-#*********************************************************************************************************************************
-"""
-Importing external libraries
+##################################################################################################################################
 
-"""
+# Project:      Weather Station Project
+# File Name:    cloud_image_processor.py
+
+# Author:       Priyanshu Bhateja
+# Purpose:      A Convolutional Neural Network Model built as a machine learning model to identify sky conditions. 
+# Description:  The model uses CNN machine learning method to determine whether the sky is clear, cloudy or rainy.
+# Date Edited:  20-11-2023
+
+##################################################################################################################################
+
+#Imports
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 from keras.preprocessing import image
 import os
 
-#*********************************************************************************************************************************
+##################################################################################################################################
 
+# Classes
 class CloudImageClassifier:
-    """ 
-    Class Definition: Cloud Image Classifier
-    A class which handles processing and classifying of cloud images.
-
-    """    
+    """ A class which handles processing and classifying of cloud images. """    
+    
     def __init__(self, train_dir, test_dir, prediction_dir, model_save_path):
         """
-        Contructor (__init__) : Initializes the classifier model with directory paths and model save paths
-        Arguments: self, train_dir, test_dir, prediction_dir, model_save_path
-        Access: Public      
+        Contructor: Initializes the classifier model with directory paths and model save paths
+        Arguments:  train_dir (str):        Directory for training data
+                    test_dir (str):         Directory for test data
+                    prediction_dir (str):   Directory for prediction images for making predictions
+                    model_save_path (str):  Directory for savinf the model in .h5 format
+
         """    
         self.train_dir = train_dir
         self.test_dir = test_dir
@@ -41,10 +40,8 @@ class CloudImageClassifier:
 
     def preprocess_data(self):
         """
-        Method: preprocess_data
-        Method to upload the data into training and testing sets with augmentation and splitting
+        Method: Uploads the data into training and testing sets with augmentation and splitting
         Arguments: self
-        Access: Public
 
         """
         # Data augmentation and split for training and validation sets
@@ -76,10 +73,9 @@ class CloudImageClassifier:
         
     def cnn_model(self):
         """
-        Method: cnn_model
-        Method to create and compile the CNN model for sky conditions classification
+        Method: Creates and compiles the CNN model for sky conditions classification
         Arguments: self
-        Access: Public
+
         """
         # Initialising
         cloud_image_model = tf.keras.models.Sequential()
@@ -96,20 +92,18 @@ class CloudImageClassifier:
 
     def train_model(self, epochs=15):
         """
-        Method: train_model
-        Method to train the CNN model with specified number of epochs)
-        Arguments: self, epochs=15
-        epochs=15: Number of times the model will run and train itself
-        Access: Public
+        Method: Trains the CNN model with specified number of epochs
+        Arguments:  self
+                    epochs=15: Number of times the model will run and train itself
+
         """
         self.model.fit(x=self.training_set, validation_data=self.validation_set, epochs=epochs)
 
     def evaluate_model(self):
         """
-        Method: evaluate_model
-        Method to evaluate and display model performance based on the test set
+        Method: Evaluates and displays model performance based on the test set
         Arguments: self
-        Access: Public
+        
         """
         test_accuracy = self.model.evaluate(self.test_set)
         print(f'Test Accuracy: {test_accuracy[1]}')
@@ -117,10 +111,9 @@ class CloudImageClassifier:
 
     def predict(self):
         """
-        Method: predict
-        Method to predict sky conditions using new images
+        Method: Predicts sky conditions using new images
         Arguments: self
-        Access: Public
+        
         """
         for img in os.listdir(self.prediction_dir):
             # Load and preprocess the image
@@ -137,14 +130,13 @@ class CloudImageClassifier:
 
     def save_model(self):
         """
-        Method: save_model
-        Saves the trained model to a specified path in .h5 format
+        Method: Saves the trained model to a specified path in .h5 format
         Arguments: self
-        Access: Public
+        
         """        
         self.model.save(self.model_save_path)
 
-#*********************************************************************************************************************************
+##################################################################################################################################
 
 # Using the class
 classifier = CloudImageClassifier(
@@ -160,4 +152,5 @@ classifier.evaluate_model()
 classifier.predict()
 classifier.save_model()
 
-#*********************************************************************************************************************************
+##################################################################################################################################
+######################################################## End of code #############################################################
