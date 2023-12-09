@@ -1,20 +1,16 @@
-#*********************************************************************************************************************************
-# Project: Weather Station Project
-# 
-# Author: Priyanshu Bhateja
-# Date Edited: 28-11-2023
-# File Name: camera_module.py
-# 
-# Purpose: A program to allow the camera module to work and take pictures periodically.
-#
-# Description: The program allows the camera module to operate and take pictures in every one hour, and saves the picture with a 
-#              custom time stamp.
-#*********************************************************************************************************************************
-#*********************************************************************************************************************************
-"""
-Importing external libraries
+##################################################################################################################################
 
-"""
+# Project:      Weather Station Project
+# File Name:    camera_module.py
+
+# Author:       Priyanshu Bhateja
+# Purpose:      A program to allow the camera module to work and take pictures periodically.
+# Description:  The program allows the camera module to operate and take pictures in every one hour, and saves the picture with a 
+#               custom time stamp.
+# Date Edited:  28-11-2023
+##################################################################################################################################
+
+#Imports
 import subprocess
 import time
 import datetime
@@ -25,26 +21,24 @@ import os
 import glob
 import RPi.GPIO as GPIO
 
-#*********************************************************************************************************************************
+##################################################################################################################################
 
+#Classes
 class Camera:
-    """ 
-    Class Definition: Camera
-    A class which handles manual and timed camera operations for taking pictures
-    """  
+    """    A class which handles manual and timed camera operations for taking pictures """  
+
     def __init__(self, picture_interval_seconds):
         """
-        Contructor (__init__) : Initializes the camera with a specified interval for timed picture taking
-        Arguments: self, picture_interval_seconds
-        Access: Public      
+        Contructor : Initializes the camera with a specified interval for timed picture taking
+        Arguments: picture_interval_seconds (float)      
         """ 
         self.picture_interval_seconds = picture_interval_seconds
+
         # Flag to control the running of the timed picture-taking thread
         self.running = True
 
     def take_picture(self):
         """
-        Method: take_picture
         Method to take a picture and save it with a timestamp
         Arguments: self
         Access: Public
@@ -91,6 +85,8 @@ class Camera:
         """         
         self.running = False
         self.timed_thread.join()
+
+##################################################################################################################################
 
 class DayAndNightAnalyzer(Camera):
     """ 
@@ -149,7 +145,7 @@ class DayAndNightAnalyzer(Camera):
         self.pwm.stop()
         GPIO.cleanup()
 
-#*********************************************************************************************************************************
+##################################################################################################################################
 
 # Usage
 if __name__ == "__main__":
@@ -170,4 +166,5 @@ if __name__ == "__main__":
         print("Exit")
         camera_analyzer.stop_timed_pictures()
     
-#*********************************************************************************************************************************
+##################################################################################################################################
+######################################################## End of code #############################################################
