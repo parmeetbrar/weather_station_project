@@ -18,7 +18,7 @@ from actuator import Actuator
 import time
 
 # Classes
-class TemperatureControlUnit:
+class TemperatureControlUnit(Actuator):
     '''Main class for the temperature control unit. Contains methods for initialization and switching states and '''
     def __init__(self,name,heater,fan):
         '''
@@ -27,7 +27,7 @@ class TemperatureControlUnit:
 					heater unit (a LED for demonstration purpose)  (LED class)
 					cooler unit (a LED for demonstration purpose)  (LED class)
 		'''
-        super().__init(name)
+        super().__init__(name)
         self.heater=heater
         self.fan=fan
         # Set the states of the unit
@@ -111,7 +111,10 @@ def tcu_init(fan_pin, heater_pin):
 
 # For testing purposes
 def main():
-    '''Create a function for testing the temperature control unit'''
+    '''
+    Create a function for testing the temperature control unit, it will initialize the unit, switch to cooling state
+    for 1 sec, then 1 sec in neutral state, 1 sec in heating state, and repeat.
+    '''
     fan_pin = 17  # GPIO pin number for fan
     heater_pin = 18  # GPIO pin number for heater
     fan, heater = tcu_init(fan_pin, heater_pin)
