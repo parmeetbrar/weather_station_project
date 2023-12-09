@@ -7,7 +7,7 @@
 # Purpose:      A program to allow the camera module to work and take pictures periodically.
 # Description:  The program allows the camera module to operate and take pictures in every one hour, and saves the picture with a 
 #               custom time stamp.
-# Date Edited:  28-11-2023
+# Date Edited:  2023/11/28
 
 ##################################################################################################################################
 
@@ -30,7 +30,7 @@ class Camera:
 
     def __init__(self, picture_interval_seconds):
         """
-        Contructor: Initializes the camera with a specified interval for timed picture taking
+        Contructor method for initializing the camera with a specified interval for timed picture taking
         Arguments:  self
                     picture_interval_seconds (float): Defines interval in seconds      
         """ 
@@ -41,7 +41,7 @@ class Camera:
 
     def take_picture(self):
         """
-        Method:     Takes a picture and saves it with a timestamp
+        Method for taking a picture and saves it with a timestamp
         Arguments:  self
 
         """
@@ -85,9 +85,7 @@ class Camera:
         self.running = False
         self.timed_thread.join()
 
-##################################################################################################################################
 
-# Classes
 class DayAndNightAnalyzer(Camera):
     """ 
     Inherited Class: DayandNightAnalyzer (Parent Class: Camera)
@@ -143,7 +141,6 @@ class DayAndNightAnalyzer(Camera):
         self.pwm.stop() # PWM Stoppage
         GPIO.cleanup() #GPIO Cleanup
 
-##################################################################################################################################
 
 # Usage
 if __name__ == "__main__":
@@ -164,5 +161,4 @@ if __name__ == "__main__":
         print("Exit")
         camera_analyzer.stop_timed_pictures()
     
-##################################################################################################################################
 ######################################################## End of code #############################################################
