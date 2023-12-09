@@ -117,9 +117,9 @@ def main():
     '''
     fan_pin = 17  # GPIO pin number for fan
     heater_pin = 18  # GPIO pin number for heater
-    fan, heater = tcu_init(fan_pin, heater_pin)
-    tcu = TemperatureControlUnit("TCU", heater, fan)
-    wait_time=1
+    fan, heater = tcu_init(fan_pin, heater_pin)  # initialize the fan and heater LED
+    tcu = TemperatureControlUnit("TCU", heater, fan)  # Create the tcu class
+    wait_time=1  # set wait time
     # Test the circuit, turn on cooler for 1 second, then off for 1 second, them heater for 1 second,
     # repeat until program stop
     while True:
