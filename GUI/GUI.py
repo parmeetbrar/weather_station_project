@@ -87,6 +87,10 @@ def refresh_data():
         label.config(image='')
         label.image = None
 
+# Function to update indoor temperature display based on slider value
+def update_indoor_temperature(slider_value):
+    desired_temp_var.set(f"{slider_value}°C")
+
 # Create the main window
 root = Tk()
 root.title("Climate Control GUI")
@@ -99,7 +103,7 @@ root.grid_columnconfigure(0, weight=1)
 root.grid_columnconfigure(1, weight=1)
 
 # Define the file path for the weather symbols
-base_folder = r"C:\Users\ASUS\Desktop\GUI"
+base_folder = r"GUI"
 
 # Load weather condition symbols using PIL
 weather_images = {
@@ -118,6 +122,7 @@ outdoor_pressure_var = StringVar()
 
 # Indoor temperature variable
 current_temp_var = StringVar()
+desired_temp_var = StringVar()
 
 # Outdoor frame
 outdoor_frame = LabelFrame(root, text="OUTDOOR", font=("Helvetica", 16), padx=10, pady=10)
@@ -152,7 +157,7 @@ indoor_frame = LabelFrame(root, text="INDOOR", font=("Helvetica", 16), padx=10, 
 indoor_frame.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
 
 # Configure the interior of the indoor frame for resizing
-for i in range(7):  # Assuming a maximum of 7 rows in the indoor frame
+for i in range(8):  # Assuming a maximum of 7 rows in the indoor frame
     indoor_frame.grid_rowconfigure(i, weight=1)
 indoor_frame.grid_columnconfigure(0, weight=1)
 indoor_frame.grid_columnconfigure(1, weight=1)
@@ -163,7 +168,12 @@ current_temp_display = Label(indoor_frame, textvariable=current_temp_var, width=
 current_temp_display.grid(row=0, column=1, sticky="w")
 
 Label(indoor_frame, text="Adjust Temperature:").grid(row=1, column=0, sticky="e")
-Scale(indoor_frame, from_=0, to=40, orient=HORIZONTAL).grid(row=1, column=1, sticky="ew")
+Scale(indoor_frame, from_=0, to=40, orient=HORIZONTAL, variable=IntVar(),
+      command=update_indoor_temperature).grid(row=1, column=1, sticky="ew")
+
+Label(indoor_frame, text="Desired Temperature:").grid(row=8, column=0, sticky="e")
+desired_temp_display = Label(indoor_frame, textvariable=desired_temp_var, width=20)
+desired_temp_display.grid(row=8, column=1, sticky="w")
 
 # Indoor toggle switches
 toggle_texts = ["Auto", "Heat On", "AC", "Auto Lights", "Energy Saving Mode"]
