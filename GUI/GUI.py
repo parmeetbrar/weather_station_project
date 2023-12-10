@@ -38,24 +38,31 @@ class ClimateControlGUI():
         self.create_outdoor_frame()
         self.create_indoor_frame()
         self.create_image_frame()
+        self.create_refresh_rate_frame()
+        self.create_refresh_display()
+        self.create_refresh_button_up()
+        self.create_refresh_button_down()
         self.create_refresh_button()
 
     def setup_grid(self):
         # Row and Column configuration for resizing
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_rowconfigure(1, weight=1)
+        self.root.grid_rowconfigure(2, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_columnconfigure(2, weight=1)
 
     def setup_variables(self):
         # Define variables here
-        self.base_folder = "C:\\Users\\Parmeet Brar\\Desktop\\MECH 524\\weather_station_project\\GUI"
+        self.base_folder = "GUI"
         self.outdoor_temp_var = StringVar()
         self.outdoor_humidity_var = StringVar()
         self.outdoor_wind_var = StringVar()
         self.outdoor_pressure_var = StringVar()
         self.current_temp_var = StringVar()
         self.desired_temp_var = StringVar()
+        self.refresh_time_var = StringVar()
 
     def load_images(self):
         # Load images here
@@ -113,7 +120,7 @@ class ClimateControlGUI():
 
     def configure_indoor_frame(self):
         # Configure the interior of the indoor frame for resizing
-        for i in range(8):  # Assuming a maximum of 7 rows in the indoor frame
+        for i in range(8):  # Assuming a maximum of 8 rows in the indoor frame
             self.indoor_frame.grid_rowconfigure(i, weight=1)
         self.indoor_frame.grid_columnconfigure(0, weight=1)
         self.indoor_frame.grid_columnconfigure(1, weight=1)
@@ -155,10 +162,50 @@ class ClimateControlGUI():
         self.camera_canvas.grid(row=0, column=0, columnspan=2, sticky="nsew")
         self.camera_canvas.create_text(380, 120, text="Camera Image Placeholder", font=("Helvetica", 16))
 
+    def create_refresh_rate_frame(self):
+        # Create and setup the image frame
+        self.refresh_rate_frame = LabelFrame(self.root, padx=2, pady=10)
+        self.refresh_rate_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=2, pady=10)
+        self.configure_refresh_rate_frame()
+
+    def configure_refresh_rate_frame(self):
+        # Configure the interior of the image frame for resizing
+        self.refresh_rate_frame.grid_rowconfigure(0, weight=1)
+        for i in range(20):  # Assuming a maximum of 5 rows in any frame
+            self.refresh_rate_frame.grid_columnconfigure(i, weight=1)
+
+    def create_refresh_display(self):
+        # Create refresh button
+        Label(self.refresh_rate_frame, text="Refresh Rate:").grid(row=2, column=0, columnspan=5, sticky="ew",pady=4)
+        desired_refresh_rate_display = Label(self.refresh_rate_frame, textvariable=self.refresh_time_var, width=4)
+        desired_refresh_rate_display.grid(row=2, column=4, columnspan=5, sticky="ew",pady=4)
+
+    def create_refresh_button_up(self):
+        # Create refresh button
+        self.refresh_rate_up = Button(self.refresh_rate_frame, text="▲", command=self.increase_refresh_rate)
+        self.refresh_rate_up.grid(row=2, column=10, sticky="ew", pady=2)
+
+    def increase_refresh_rate(self):
+        global refresh_time
+        if refresh_time < 120000:
+            refresh_time += 1000
+            self.refresh_time_var.set(f"{refresh_time/1000} s")
+    
+    def create_refresh_button_down(self):
+        # Create refresh button
+        self.refresh_rate_down = Button(self.refresh_rate_frame, text="▼", command=self.decrease_refresh_rate)
+        self.refresh_rate_down.grid(row=2, column=11, sticky="ew", pady=2)
+
+    def decrease_refresh_rate(self):
+        global refresh_time
+        if refresh_time > 1000:
+            refresh_time -= 1000
+            self.refresh_time_var.set(f"{refresh_time} s")
+
     def create_refresh_button(self):
         # Create refresh button
-        self.refresh_button = Button(self.root, text="Refresh Data", command=self.refresh_data)
-        self.refresh_button.grid(row=2, column=0, columnspan=2, sticky="ew", pady=10)
+        self.refresh_button = Button(self.refresh_rate_frame, text="Refresh Data", command=self.refresh_data)
+        self.refresh_button.grid(row=2, column=12, columnspan=8, sticky="ew", pady=8)
 
     def refresh_data(self):
         # Method to refresh data with random values and update weather symbol

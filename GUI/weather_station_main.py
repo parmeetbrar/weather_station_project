@@ -16,7 +16,7 @@
 # from air_quality import AirQualitySensor
 # from Anemometer import Anemometer
 # from camera_module import Camera
-import gui
+import GUI
 import threading
 import time
 import random
@@ -33,23 +33,25 @@ import random
 
 
 def application():
-    gui.temp_outdoor = random.randrange(-10, 40)
-    gui.temp_indoor = random.randrange(-10, 40)
-    gui.humidity = 1
-    gui.wind_speed = 1
-    gui.pressure_outdoor = 1
-    gui.refresh_time=5000
-    app = gui.ClimateControlGUI()
+    GUI.temp_outdoor = random.randrange(-10, 40)
+    GUI.temp_indoor = random.randrange(-10, 40)
+    GUI.humidity = 1
+    GUI.wind_speed = 1
+    GUI.pressure_outdoor = 1
+    GUI.refresh_time = 5000
+    app = GUI.ClimateControlGUI()
     app.self_update()
+    app.refresh_time_var.set(f"{GUI.refresh_time} s")
+    app.update_indoor_temperature(GUI.temp_indoor)
     app.run()
 
 def update_data():
     while True:
-        gui.temp_outdoor = random.randrange(-10, 40)
-        gui.temp_indoor = random.randrange(-10, 40)
-        gui.humidity = 1
-        gui.wind_speed = 1
-        gui.pressure_outdoor = 1
+        GUI.temp_outdoor = random.randrange(-10, 40)
+        GUI.temp_indoor = random.randrange(-10, 40)
+        GUI.humidity = 1
+        GUI.wind_speed = 1
+        GUI.pressure_outdoor = 1
         time.sleep(0.5)
 
 def main():
