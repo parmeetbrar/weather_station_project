@@ -31,13 +31,19 @@ Reduce energy usage and enhance environmental sustainability.
                     *source **your_environment_name**/bin/activate*
 5. Run the *main.py* script using RaspberryPi IDE or *main.exe* on the RaspberryPi to start the weather station.
 
+## Documentation
+For instructions regarding setup, hardware requirements, and usage, please refer to documentation.
+
+## License
+The project is licensed under UBC License.
+
 ## Acknowledgement:
 Many thanks to the open-source community and ChatGPT for supplying libraries and resources that were used in this project.
 
 ## Authors
-1. Parmeet Brar
-2. Priyanshu Bhateja
-3. Halvard Ng
+1. Parmeet Brar:        Student ID: 20877288
+2. Priyanshu Bhateja:   Student ID: 81567786
+3. Halvard Ng:          Srudent ID: 41277492
 
 
 
