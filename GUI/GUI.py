@@ -11,11 +11,18 @@
 #######################################################################################################################
 
 # Imports
-
 from tkinter import Tk, Label, Scale, HORIZONTAL, LabelFrame, Button, StringVar, IntVar, Canvas
 from PIL import Image, ImageTk
 import random
 import os
+
+# Global Variables
+temp_outdoor = None
+temp_indoor = None
+humidity = None
+wind_speed = None
+pressure_outdoor = None
+refresh_time = None
 
 # Classes
 
@@ -48,6 +55,7 @@ class ClimateControlGUI():
         self.outdoor_wind_var = StringVar()
         self.outdoor_pressure_var = StringVar()
         self.current_temp_var = StringVar()
+        self.desired_temp_var = StringVar()
 
     def load_images(self):
         # Load images here
@@ -92,6 +100,10 @@ class ClimateControlGUI():
         for i, label in enumerate(self.weather_labels):
             label.grid(row=4, column=i, pady=10, sticky="w")
 
+    # Function to update indoor temperature display based on slider value
+    def update_indoor_temperature(self,slider_value):
+        self.desired_temp_var.set(f"{slider_value}°C")
+
     def create_indoor_frame(self):
         # Create and setup the indoor frame
         self.indoor_frame = LabelFrame(self.root, text="INDOOR", font=("Helvetica", 16), padx=10, pady=10)
@@ -101,7 +113,7 @@ class ClimateControlGUI():
 
     def configure_indoor_frame(self):
         # Configure the interior of the indoor frame for resizing
-        for i in range(7):  # Assuming a maximum of 7 rows in the indoor frame
+        for i in range(8):  # Assuming a maximum of 7 rows in the indoor frame
             self.indoor_frame.grid_rowconfigure(i, weight=1)
         self.indoor_frame.grid_columnconfigure(0, weight=1)
         self.indoor_frame.grid_columnconfigure(1, weight=1)
@@ -113,7 +125,13 @@ class ClimateControlGUI():
         current_temp_display.grid(row=0, column=1, sticky="w")
 
         Label(self.indoor_frame, text="Adjust Temperature:").grid(row=1, column=0, sticky="e")
-        Scale(self.indoor_frame, from_=0, to=40, orient=HORIZONTAL).grid(row=1, column=1, sticky="ew")
+        Scale(self.indoor_frame, from_=0, to=40, orient=HORIZONTAL, variable=IntVar(),
+            command=self.update_indoor_temperature).grid(row=1, column=1, sticky="ew")
+
+        Label(self.indoor_frame, text="Desired Temperature:").grid(row=8, column=0, sticky="e")
+        desired_temp_display = Label(self.indoor_frame, textvariable=self.desired_temp_var, width=20)
+        desired_temp_display.grid(row=8, column=1, sticky="w")
+
 
         # Indoor toggle switches
         toggle_texts = ["Auto", "Heat On", "AC", "Auto Lights", "Energy Saving Mode"]
@@ -144,22 +162,18 @@ class ClimateControlGUI():
 
     def refresh_data(self):
         # Method to refresh data with random values and update weather symbol
-        # Generate random sensor values
-        temp = random.randint(-10, 40)
-        humidity = random.randint(0, 100)
-        wind_speed = random.randint(0, 150)
-
+        
         # Update outdoor data with random sensor values
-        self.outdoor_temp_var.set(f"{temp}°C")
+        self.outdoor_temp_var.set(f"{temp_outdoor}°C")
         self.outdoor_humidity_var.set(f"{humidity}%")
         self.outdoor_wind_var.set(f"{wind_speed} km/h")
-        self.outdoor_pressure_var.set(f"{random.randint(950, 1050)} hPa")
+        self.outdoor_pressure_var.set(f"{pressure_outdoor} hPa")
 
         # Update indoor temperature display
-        self.current_temp_var.set(f"{random.randint(16, 30)}°C")
+        self.current_temp_var.set(f"{temp_indoor}°C")
 
         # Determine weather conditions based on sensor values
-        current_conditions = self.determine_weather_condition(temp, humidity, wind_speed)
+        current_conditions = self.determine_weather_condition(temp_indoor, humidity, wind_speed)
 
         # Update the weather condition images
         for label, condition in zip(self.weather_labels, current_conditions):
@@ -170,6 +184,10 @@ class ClimateControlGUI():
         for label in self.weather_labels[len(current_conditions):]:
             label.config(image='')
             label.image = None
+
+    def self_update(self):
+        self.refresh_data()
+        self.root.after(refresh_time,self.self_update)
 
     def load_weather_image(self, filename, size=(50, 50)):
         # Method to load and resize images using PIL
@@ -220,5 +238,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
