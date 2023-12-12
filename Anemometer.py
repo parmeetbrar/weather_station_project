@@ -31,7 +31,7 @@ class Anemometer(Sensor):
     def __init__(self, name, radius_cm, wind_interval, reed_switch_pin):
         '''
         Constructor method for anemometer class 
-        Args: name: name: Name of the sensor (str)
+        Args: name: Name of the sensor (str)
                     radius_cm: Radius of rotating magnet in cm (int)
                     wind_interval: How often the wind speed should be recorded (int)
                     reed_switch_pin: GPIO pin for reed switch input
