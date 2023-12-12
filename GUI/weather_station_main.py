@@ -21,18 +21,9 @@ import threading
 import time
 import random
 
-
-# Global variables
-# Initialization sensor objects and gui
-# bme280_indoor = BME280SensorI2C()
-# bme280_outdoor = BME280SensorI2C()
-# anemometer = Anemometer("anemometer", 1.125, update_interval, 17)
-# air_quality_outdoor =  AirQualitySensor("air_quality_outdoor", 0)
-# camera_outdoor = Camera()
-# gui = Gui()
-
-
+# Functions
 def application():
+    '''Initialize the GUI application. This function is for the GUI to run in a thread'''
     GUI.temp_outdoor = random.randrange(-10, 40)
     GUI.temp_indoor = random.randrange(-10, 40)
     GUI.humidity = 1
@@ -41,20 +32,25 @@ def application():
     GUI.refresh_time = 5000
     app = GUI.ClimateControlGUI()
     app.self_update()
-    app.refresh_time_var.set(f"{GUI.refresh_time} s")
+    app.refresh_time_var.set(f"{GUI.refresh_time/1000} s")
     app.update_indoor_temperature(GUI.temp_indoor)
     app.run()
 
 def update_data():
+    '''Collect sensor data base on GUI refresh rate, send the data to GUI file for GUI update.'''
     while True:
         GUI.temp_outdoor = random.randrange(-10, 40)
         GUI.temp_indoor = random.randrange(-10, 40)
         GUI.humidity = 1
         GUI.wind_speed = 1
         GUI.pressure_outdoor = 1
-        time.sleep(0.5)
+        time.sleep(GUI.refresh_time)
 
 def main():
+    '''
+    Main function for the weather station project. Initialize all the sensors. Start the multithreading process to
+    cocurrently update the GUI and Collect data from sensors and cameras
+    '''
     thread1=threading.Thread(target=application)
     thread2= threading.Thread(target=update_data)
     thread1.start()

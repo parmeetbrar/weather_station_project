@@ -189,7 +189,7 @@ class ClimateControlGUI():
         global refresh_time
         if refresh_time < 120000:
             refresh_time += 1000
-            self.refresh_time_var.set(f"{refresh_time/1000} s")
+            self.refresh_time_var.set(f"{refresh_time} s")
     
     def create_refresh_button_down(self):
         # Create refresh button
@@ -200,7 +200,7 @@ class ClimateControlGUI():
         global refresh_time
         if refresh_time > 1000:
             refresh_time -= 1000
-            self.refresh_time_var.set(f"{refresh_time} s")
+            self.refresh_time_var.set(f"{refresh_time/1000} s")
 
     def create_refresh_button(self):
         # Create refresh button
