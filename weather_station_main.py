@@ -11,10 +11,10 @@
 #######################################################################################################################
 
 # Imports
-# from sensor import Sensor
-# from BME280_sensor import BME280SensorI2C
-# from air_quality import AirQualitySensor
-# from Anemometer import Anemometer
+from sensor import Sensor
+from BME280_sensor import BME280SensorI2C
+from air_quality import AirQualitySensor
+from Anemometer import Anemometer
 # from camera_module import Camera
 import GUI
 import threading
@@ -24,15 +24,15 @@ import os
 import glob
 from PIL import Image, ImageTk
 
-from camera_module.py import DayAndNightAnalyzer, Camera
-from cnn_model_for_pi.py import RaspiPredictor
+# from camera_module.py import DayAndNightAnalyzer, Camera
+# from cnn_model_for_pi.py import RaspiPredictor
 
 # Global variables
 # Initialization sensor objects and gui
-# bme280_indoor = BME280SensorI2C()
-# bme280_outdoor = BME280SensorI2C()
-# anemometer = Anemometer("anemometer", 1.125, update_interval, 17)
-# air_quality_outdoor =  AirQualitySensor("air_quality_outdoor", 0)
+bme280_indoor = BME280SensorI2C()
+bme280_outdoor = BME280SensorI2C()
+anemometer = Anemometer("anemometer", 1.125, GUI.update_interval, 17)
+air_quality_outdoor =  AirQualitySensor("air_quality_outdoor", 0)
 # camera_outdoor = Camera()
 # gui = Gui()
 
