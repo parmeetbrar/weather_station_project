@@ -13,7 +13,7 @@
 
 # Classes
 class Actuator:
-	'''Create a base class for all type of actuator.'''
+	'''Create a base class for all type of actuator. The actuators will be represented by LED in our Project'''
 	def __init__(self,name):
 		'''
 		Constructor method for the Sensor Class
