@@ -44,7 +44,9 @@ from cnn_model_for_pi.py import RaspiPredictor
 # predictor = RaspiPredictor(model_path)
 
 
+# Functions
 def application():
+    '''Initialize the GUI application. This function is for the GUI to run in a thread'''
     GUI.temp_outdoor = random.randrange(-10, 40)
     GUI.temp_indoor = random.randrange(-10, 40)
     GUI.humidity = 1
@@ -53,18 +55,19 @@ def application():
     GUI.refresh_time = 5000
     app = GUI.ClimateControlGUI()
     app.self_update()
-    app.refresh_time_var.set(f"{GUI.refresh_time} s")
+    app.refresh_time_var.set(f"{GUI.refresh_time/1000} s")
     app.update_indoor_temperature(GUI.temp_indoor)
     app.run()
 
 def update_data():
+    '''Collect sensor data base on GUI refresh rate, send the data to GUI file for GUI update.'''
     while True:
         GUI.temp_outdoor = random.randrange(-10, 40)
         GUI.temp_indoor = random.randrange(-10, 40)
         GUI.humidity = 1
         GUI.wind_speed = 1
         GUI.pressure_outdoor = 1
-        time.sleep(0.5)
+        time.sleep(GUI.refresh_time)
 
 def load_weather_image(self, filename, size=(50, 50)):
     img = Image.open(os.path.join(self.base_folder, filename))
@@ -107,6 +110,10 @@ def camera_and_predictor():
             day_night_status = "Day" if brightness > 60 else "Night"
 
 def main():
+    '''
+    Main function for the weather station project. Initialize all the sensors. Start the multithreading process to
+    cocurrently update the GUI and Collect data from sensors and cameras
+    '''
     thread1=threading.Thread(target=application)
     thread2= threading.Thread(target=update_data)
     thread3= threading.Thread(target=load_weather_image)
