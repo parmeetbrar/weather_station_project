@@ -152,7 +152,7 @@ class ClimateControlGUI():
             toggle.grid(row=i+2, column=0, columnspan=2, sticky="ew")
 
     def create_image_frame(self):
-        '''Create and setup the image frame.'''
+        '''Create and set up the frame for displaying camera images.'''
         self.image_frame = LabelFrame(self.root, text="Camera Image", font=("Helvetica", 16), padx=10, pady=10)
         self.image_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
         self.configure_image_frame()
@@ -168,40 +168,42 @@ class ClimateControlGUI():
         self.camera_canvas.create_text(380, 120, text="Camera Image Placeholder", font=("Helvetica", 16))
 
     def create_refresh_rate_frame(self):
-        # Create and setup the image frame
+        '''Create and set up the frame for controlling the refresh rate.'''
         self.refresh_rate_frame = LabelFrame(self.root, padx=2, pady=10)
         self.refresh_rate_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=2, pady=10)
         self.configure_refresh_rate_frame()
 
     def configure_refresh_rate_frame(self):
-        # Configure the interior of the image frame for resizing
+        '''Configure the interior of the image frame for resizing.'''
         self.refresh_rate_frame.grid_rowconfigure(0, weight=1)
         for i in range(20):  # Assuming a maximum of 5 rows in any frame
             self.refresh_rate_frame.grid_columnconfigure(i, weight=1)
 
     def create_refresh_display(self):
-        # Create refresh button
+        '''Create refresh button.'''
         Label(self.refresh_rate_frame, text="Refresh Rate:").grid(row=2, column=0, columnspan=5, sticky="ew",pady=4)
         desired_refresh_rate_display = Label(self.refresh_rate_frame, textvariable=self.refresh_time_var, width=4)
         desired_refresh_rate_display.grid(row=2, column=4, columnspan=5, sticky="ew",pady=4)
 
     def create_refresh_button_up(self):
-        # Create refresh button
-        self.refresh_rate_up = Button(self.refresh_rate_frame, text="▲", command=self.increase_refresh_rate)
+        '''Create refresh button.'''
+        self.refresh_rate_up = Button(self.refresh_rate_frame, text="▲", command=self.increase_refresh_time)
         self.refresh_rate_up.grid(row=2, column=10, sticky="ew", pady=2)
 
-    def increase_refresh_rate(self):
+    def increase_refresh_time(self):
+        ''' method for increasing refresh time'''
         global refresh_time
         if refresh_time < 120000:
             refresh_time += 1000
             self.refresh_time_var.set(f"{refresh_time} s")
     
     def create_refresh_button_down(self):
-        # Create refresh button
-        self.refresh_rate_down = Button(self.refresh_rate_frame, text="▼", command=self.decrease_refresh_rate)
+        ''' Create refresh button.'''
+        self.refresh_rate_down = Button(self.refresh_rate_frame, text="▼", command=self.decrease_refresh_time)
         self.refresh_rate_down.grid(row=2, column=11, sticky="ew", pady=2)
 
-    def decrease_refresh_rate(self):
+    def decrease_refresh_time(self):
+        '''method for decreasing refresh time'''
         global refresh_time
         if refresh_time > 1000:
             refresh_time -= 1000
@@ -221,7 +223,7 @@ class ClimateControlGUI():
 
         # Update indoor temperature display
         self.current_temp_var.set(f"{temp_indoor}°C")
-
+        
         # Determine weather conditions based on sensor values
         current_conditions = self.determine_weather_condition(temp_indoor, humidity, wind_speed)
 
