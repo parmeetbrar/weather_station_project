@@ -6,7 +6,7 @@
 # Author: Parmeet Brar
 # Purpose:       
 # Description: 
-# Date last edited: 11/24/2023
+# Date last edited: 2023/12/12
 
 #######################################################################################################################
 
@@ -25,13 +25,16 @@ pressure_outdoor = None
 refresh_time = None
 
 # Classes
-
 class ClimateControlGUI():
+    ''' 
+    ClimateControlGUI class for weather station GUI. This class initializes and manages the graphical user 
+    interface for the weather station. 
+    '''
     def __init__(self):
-        # Initialize the main window
+        '''Constructor method for ClimateControlGUI class. Initializes the GUI window. '''
         self.root = Tk()
         self.root.title("Climate Control GUI")
-        self.root.geometry("800x600")
+        self.root.geometry("800x600") # Initialize the main window size
         self.setup_grid()
         self.setup_variables()
         self.load_images()
@@ -41,14 +44,14 @@ class ClimateControlGUI():
         self.create_refresh_button()
 
     def setup_grid(self):
-        # Row and Column configuration for resizing
+        '''Set up row and column configuration'''
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_rowconfigure(1, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
 
     def setup_variables(self):
-        # Define variables here
+         '''Set up global variables and define string variables.'''
         self.base_folder = "C:\\Users\\Parmeet Brar\\Desktop\\MECH 524\\weather_station_project\\GUI"
         self.outdoor_temp_var = StringVar()
         self.outdoor_humidity_var = StringVar()
@@ -58,7 +61,7 @@ class ClimateControlGUI():
         self.desired_temp_var = StringVar()
 
     def load_images(self):
-        # Load images here
+        '''Load weather condition symbols.'''
         self.weather_images = {
             'cloud': self.load_weather_image('cloud.png'),
             'cold': self.load_weather_image('cold.png'),
@@ -68,21 +71,21 @@ class ClimateControlGUI():
         }
 
     def create_outdoor_frame(self):
-        # Create and setup the outdoor frame
+        '''Create outdoor data display frame for GUI'''
         self.outdoor_frame = LabelFrame(self.root, text="OUTDOOR", font=("Helvetica", 16), padx=10, pady=10)
         self.outdoor_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
         self.configure_outdoor_frame()
         self.add_outdoor_labels()
 
     def configure_outdoor_frame(self):
-        # Configure the interior of the frames for resizing
+        '''Configure the interior of the frames for resizing'''
         for i in range(5):  # Assuming a maximum of 5 rows in any frame
             self.outdoor_frame.grid_rowconfigure(i, weight=1)
         self.outdoor_frame.grid_columnconfigure(0, weight=1)
         self.outdoor_frame.grid_columnconfigure(1, weight=1)
 
     def add_outdoor_labels(self):
-        # Outdoor data labels
+        ''' Add labels for outdoor temperature, humidity, wind speed, pressure, and weather conditions.'''
         Label(self.outdoor_frame, text="Temperature (°C):").grid(row=0, column=0, sticky="e")
         Label(self.outdoor_frame, textvariable=self.outdoor_temp_var, width=20).grid(row=0, column=1, sticky="w")
 
@@ -100,26 +103,29 @@ class ClimateControlGUI():
         for i, label in enumerate(self.weather_labels):
             label.grid(row=4, column=i, pady=10, sticky="w")
 
-    # Function to update indoor temperature display based on slider value
     def update_indoor_temperature(self,slider_value):
+        '''
+        Function to update indoor temperature display based on slider value
+        Args: slider_value (int), the current value of the temperature adjustment slider.
+        '''
         self.desired_temp_var.set(f"{slider_value}°C")
 
     def create_indoor_frame(self):
-        # Create and setup the indoor frame
+        '''Create and setup the indoor frame.'''
         self.indoor_frame = LabelFrame(self.root, text="INDOOR", font=("Helvetica", 16), padx=10, pady=10)
         self.indoor_frame.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
         self.configure_indoor_frame()
         self.add_indoor_components()
 
     def configure_indoor_frame(self):
-        # Configure the interior of the indoor frame for resizing
+        '''Configure the interior of the indoor frame for resizing.'''
         for i in range(8):  # Assuming a maximum of 7 rows in the indoor frame
             self.indoor_frame.grid_rowconfigure(i, weight=1)
         self.indoor_frame.grid_columnconfigure(0, weight=1)
         self.indoor_frame.grid_columnconfigure(1, weight=1)
 
     def add_indoor_components(self):
-        # Indoor temperature display and slider
+        '''Add components for displaying current indoor temperature, adjusting temperature, and desired temperature.'''
         Label(self.indoor_frame, text="Current Temperature:").grid(row=0, column=0, sticky="e")
         current_temp_display = Label(self.indoor_frame, textvariable=self.current_temp_var, width=20)
         current_temp_display.grid(row=0, column=1, sticky="w")
@@ -132,7 +138,6 @@ class ClimateControlGUI():
         desired_temp_display = Label(self.indoor_frame, textvariable=self.desired_temp_var, width=20)
         desired_temp_display.grid(row=8, column=1, sticky="w")
 
-
         # Indoor toggle switches
         toggle_texts = ["Auto", "Heat On", "AC", "Auto Lights", "Energy Saving Mode"]
         for i, text in enumerate(toggle_texts):
@@ -140,13 +145,13 @@ class ClimateControlGUI():
             toggle.grid(row=i+2, column=0, columnspan=2, sticky="ew")
 
     def create_image_frame(self):
-        # Create and setup the image frame
+        '''Create and setup the image frame.'''
         self.image_frame = LabelFrame(self.root, text="Camera Image", font=("Helvetica", 16), padx=10, pady=10)
         self.image_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
         self.configure_image_frame()
 
     def configure_image_frame(self):
-        # Configure the interior of the image frame for resizing
+        '''Configure the interior of the image frame for resizing.'''
         self.image_frame.grid_rowconfigure(0, weight=1)
         self.image_frame.grid_columnconfigure(0, weight=1)
 
@@ -156,14 +161,12 @@ class ClimateControlGUI():
         self.camera_canvas.create_text(380, 120, text="Camera Image Placeholder", font=("Helvetica", 16))
 
     def create_refresh_button(self):
-        # Create refresh button
+        '''Create refresh button'''
         self.refresh_button = Button(self.root, text="Refresh Data", command=self.refresh_data)
         self.refresh_button.grid(row=2, column=0, columnspan=2, sticky="ew", pady=10)
 
     def refresh_data(self):
-        # Method to refresh data with random values and update weather symbol
-        
-        # Update outdoor data with random sensor values
+        '''Method to refresh data using most recent data'''
         self.outdoor_temp_var.set(f"{temp_outdoor}°C")
         self.outdoor_humidity_var.set(f"{humidity}%")
         self.outdoor_wind_var.set(f"{wind_speed} km/h")
@@ -186,17 +189,29 @@ class ClimateControlGUI():
             label.image = None
 
     def self_update(self):
+        '''This function updates the values on the GUI based on the defined refersh rate.'''
         self.refresh_data()
         self.root.after(refresh_time,self.self_update)
 
     def load_weather_image(self, filename, size=(50, 50)):
-        # Method to load and resize images using PIL
+        '''
+        Method to load and resize images using PIL
+        Args: filename: The name of the image file (str)
+              size: The size of which the mage should be resized(tuple). Defaults to (50,50)
+        Return: ImageTk.PhotoImage: The resized image as a Tkinter PhotoImage.
+        '''
         img = Image.open(os.path.join(self.base_folder, filename))
         img = img.resize(size, Image.Resampling.LANCZOS)
         return ImageTk.PhotoImage(img)
 
     def determine_weather_condition(self, temp, humidity, wind_speed):
-        # Method to determine weather condition based on sensor values
+        '''
+        Method to determine weather condition based on sensor values
+        Args: temp: The temperature value (float)
+              humidity: The humidity value (float)
+              wind_speed: The wind speed value 
+        Return: conditions: A list of weather conditions determined based on the input sensor values
+        '''
         conditions = []
         if temp > 25:
             conditions.append('sunny')
@@ -206,18 +221,27 @@ class ClimateControlGUI():
             conditions.append('rain')
         elif humidity > 70:
             conditions.append('cloud')
-
         if wind_speed > 25:
             conditions.append('wind')
-
         return conditions
 
     def create_toggle(self, parent, text):
+        '''
+        Create a toggle switch button with specified text.
+        Args: parent: The parent frame or widget.
+              text: The text to display on the toggle switch (str).
+        Returns: toggle: The toggle switch button.
+        '''
         var = IntVar(value=0)
         toggle = Label(parent, text=text, relief="raised", width=8, bg="red")
         toggle.var = var
 
         def on_click(event):
+            '''
+            Event handler for the toggle switch button click. This method changes the relief and background
+            color of the toggle switch button based on its current state.
+            Args: event: The click event triggering the method.
+            '''
             if toggle.var.get() == 0:
                 toggle.config(relief="sunken", bg="green")
                 toggle.var.set(1)
@@ -229,10 +253,14 @@ class ClimateControlGUI():
         return toggle
 
     def run(self):
+        ''' Run the main even loop for the GUI'''
         self.root.mainloop()
 
-# Main function
 def main():
+    '''
+    Main function to instantiate and run the ClimateControlGUI class.
+    For testing purposes 
+    '''
     app = ClimateControlGUI()
     app.run()
 
