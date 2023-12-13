@@ -17,8 +17,6 @@ import numpy as np
 from keras.preprocessing import image
 import os
 
-##################################################################################################################################
-
 # Classes
 class CloudImageClassifier:
     ''' A class which handles processing and classifying of cloud images. '''    
@@ -67,7 +65,6 @@ class CloudImageClassifier:
             target_size=(64, 64),
             batch_size=32,
             class_mode='categorical')
-        
         
     def cnn_model(self):
         '''
@@ -128,7 +125,6 @@ class CloudImageClassifier:
         Arguments:  self
         '''        
         self.model.save(self.model_save_path)
-
 
 # Using the class
 classifier = CloudImageClassifier(

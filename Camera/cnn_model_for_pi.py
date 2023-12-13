@@ -17,8 +17,6 @@ import tflite_runtime.interpreter as tflite
 from PIL import Image
 import os
 
-##################################################################################################################################
-
 # Classes
 class RaspiPredictor:
     ''' A class for loading a TensorFlow Lite model and performing image predictions '''
@@ -86,7 +84,6 @@ class RaspiPredictor:
         for img in os.listdir(directory_path):
             prediction = self.predict_image(os.path.join(directory_path, img))
             print(f'{img} = {prediction}')
-
 
 # Usage
 model_path = '/home/Pi/Desktop/cloud_image_model.tflite'

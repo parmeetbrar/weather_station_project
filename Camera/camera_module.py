@@ -22,8 +22,6 @@ import os
 import glob
 import RPi.GPIO as GPIO
 
-##################################################################################################################################
-
 #Classes
 class Camera:
     ''' A class which handles manual and timed camera operations for taking pictures '''  
@@ -81,7 +79,6 @@ class Camera:
         self.running = False
         self.timed_thread.join()
 
-
 class DayAndNightAnalyzer(Camera):
     ''' 
     Inherited Class: DayandNightAnalyzer (Parent Class: Camera)
@@ -133,9 +130,7 @@ class DayAndNightAnalyzer(Camera):
         self.pwm.stop() # PWM Stoppage
         GPIO.cleanup() #GPIO Cleanup
 
-
 # Usage Test (Will be included in the main file and removed from here)
-
 if __name__ == "__main__":
     camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds=60)
     camera_analyzer.start_timed_pictures()
