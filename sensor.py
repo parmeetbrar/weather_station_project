@@ -23,7 +23,7 @@ class Sensor:
 		self.name = name
 	
 	# Read sensor data
-	def read_sensor_data():
+	def read_sensor_data(self):
 		'''Create a method for sensor subclass to override, raise if this method is called here.'''
 		raise Exception("The read_sensor_data method should be overridden by subclasses.")
 
