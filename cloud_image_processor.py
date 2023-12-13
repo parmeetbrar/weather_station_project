@@ -21,17 +21,16 @@ import os
 
 # Classes
 class CloudImageClassifier:
-    """ A class which handles processing and classifying of cloud images. """    
+    ''' A class which handles processing and classifying of cloud images. '''    
     
     def __init__(self, train_dir, test_dir, prediction_dir, model_save_path):
-        """
+        '''
         Constructor method to initialize the classifier model with directory paths and model save paths
         Arguments:  train_dir (str):        Directory for training data
                     test_dir (str):         Directory for test data
                     prediction_dir (str):   Directory for prediction images for making predictions
                     model_save_path (str):  Directory for savinf the model in .h5 format
-
-        """    
+        '''    
         self.train_dir = train_dir
         self.test_dir = test_dir
         self.prediction_dir = prediction_dir
@@ -39,11 +38,10 @@ class CloudImageClassifier:
         self.model = None
 
     def preprocess_data(self):
-        """
+        '''
         Method to upload the data into training and testing sets with augmentation and splitting
         Arguments:  self
-
-        """
+        '''
         # Data augmentation and split for training and validation sets
         train_datagen = ImageDataGenerator(rescale=1./255,
                                            shear_range=0.2,
@@ -72,11 +70,10 @@ class CloudImageClassifier:
         
         
     def cnn_model(self):
-        """
+        '''
         Method to create and compile the CNN model for sky conditions classification
         Arguments:  self
-
-        """
+        '''
         # Initialising
         cloud_image_model = tf.keras.models.Sequential()
         # Adding input, convolutional, pooling anf dense layers
@@ -91,30 +88,27 @@ class CloudImageClassifier:
         cloud_image_model.compile(loss='categorical_crossentropy', optimizer='nadam',metrics=['accuracy'])
 
     def train_model(self, epochs=15):
-        """
+        '''
         Method to train the CNN model with specified number of epochs
         Arguments:  self
                     epochs=15: Number of times the model will run and train itself
-
-        """
+        '''
         self.model.fit(x=self.training_set, validation_data=self.validation_set, epochs=epochs)
 
     def evaluate_model(self):
-        """
+        '''
         Method to evaluate and display model performance based on the test set
         Arguments:  self
-        
-        """
+        '''
         test_accuracy = self.model.evaluate(self.test_set)
         print(f'Test Accuracy: {test_accuracy[1]}')
 
 
     def predict(self):
-        """
+        '''
         Method to predict sky conditions using new images
         Arguments:  self
-        
-        """
+        '''
         for img in os.listdir(self.prediction_dir):
             # Load and preprocess the image
             test_image = image.load_img(os.path.join(self.prediction_dir, img), target_size=(64, 64))
@@ -129,11 +123,10 @@ class CloudImageClassifier:
             print(f'{img} = {prediction}')
 
     def save_model(self):
-        """
+        '''
         Method to save the trained model to a specified path in .h5 format
         Arguments:  self
-        
-        """        
+        '''        
         self.model.save(self.model_save_path)
 
 
