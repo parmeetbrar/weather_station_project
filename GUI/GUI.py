@@ -151,7 +151,7 @@ class ClimateControlGUI():
         desired_temp_display.grid(row=8, column=1, sticky="w")
 
         # Indoor toggle switches
-        toggle_texts = ["Auto", "Heat On", "AC", "Auto Lights", "Energy Saving Mode"]
+        toggle_texts = ["Auto", "Heat On", "AC", "Auto Lights"]
         for i, text in enumerate(toggle_texts):
             toggle = self.create_toggle(self.indoor_frame, text)
             toggle.grid(row=i+2, column=0, columnspan=2, sticky="ew")
@@ -183,7 +183,7 @@ class ClimateControlGUI():
         '''Activates energy saving mode by changing GUI colors and increasing refresh interval.'''
         self.root.config(bg='dark grey')  # Simulate reduced brightness
         global refresh_time
-        refresh_time = max(refresh_time, 10000)  # Set a minimum 10-second refresh interval
+        refresh_time = max(refresh_time, 1800000)  # Set a minimum 30-minute refresh interval
         self.refresh_time_var.set(f"{refresh_time/1000} s")
 
     def deactivate_energy_saving_mode(self):
