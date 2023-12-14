@@ -11,7 +11,7 @@
 #######################################################################################################################
 
 # Imports
-from tkinter import Tk, Label, Scale, HORIZONTAL, LabelFrame, Button, StringVar, IntVar, Canvas
+from tkinter import Tk, Label, Scale, HORIZONTAL, LabelFrame, Button, StringVar, IntVar, Canvas, Toplevel, LEFT
 from PIL import Image, ImageTk
 import random
 import os
@@ -23,6 +23,11 @@ humidity = None
 wind_speed = None
 pressure_outdoor = None
 refresh_time = None
+
+# Threshholds
+EXTREME_TEMPERATURE_THRESHOLD = (0, 35)  # Example range in Celsius
+EXTREME_HUMIDITY_THRESHOLD = (20, 80)  # Example range in percentage
+EXTREME_PRESSURE_THRESHOLD = (980, 1020)  # Example range in hPa
 
 # Classes
 class ClimateControlGUI():
@@ -264,6 +269,9 @@ class ClimateControlGUI():
         # Determine weather conditions based on sensor values
         current_conditions = self.determine_weather_condition(temp_indoor, humidity, wind_speed)
 
+        # Check for extreme weather conditions
+        self.check_for_extreme_weather()
+
         # Update the weather condition images
         for label, condition in zip(self.weather_labels, current_conditions):
             label.config(image=self.weather_images[condition])
@@ -310,6 +318,36 @@ class ClimateControlGUI():
         if wind_speed > 25:
             conditions.append('wind')
         return conditions
+    
+    def check_for_extreme_weather(self):
+        '''
+        Check the current weather data against the thresholds and display notifications for extreme conditions.
+        '''
+        temp = float(self.outdoor_temp_var.get().rstrip('°C'))
+        humidity = float(self.outdoor_humidity_var.get().rstrip('%'))
+        pressure = float(self.outdoor_pressure_var.get().rstrip(' hPa'))
+
+        message = ""
+        if not (EXTREME_TEMPERATURE_THRESHOLD[0] <= temp <= EXTREME_TEMPERATURE_THRESHOLD[1]):
+            message += f"Extreme Temperature Alert: {temp}°C\n"
+        if not (EXTREME_HUMIDITY_THRESHOLD[0] <= humidity <= EXTREME_HUMIDITY_THRESHOLD[1]):
+            message += f"Extreme Humidity Alert: {humidity}%\n"
+        if not (EXTREME_PRESSURE_THRESHOLD[0] <= pressure <= EXTREME_PRESSURE_THRESHOLD[1]):
+            message += f"Extreme Pressure Alert: {pressure} hPa\n"
+
+        if message:
+            self.show_notification(message)
+
+    def show_notification_extreme_weather(self, message):
+        '''
+        Display a notification message in the GUI.
+        '''
+        notification_window = Toplevel(self.root)
+        notification_window.title("Weather Alert")
+        notification_window.geometry("300x200")
+        Label(notification_window, text=message, justify=LEFT).pack(pady=20)
+        Button(notification_window, text="Dismiss", command=notification_window.destroy).pack()
+        
 
     def create_toggle(self, parent, text):
         '''
