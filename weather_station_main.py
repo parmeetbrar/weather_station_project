@@ -24,8 +24,8 @@ import os
 import glob
 from PIL import Image, ImageTk
 
-# from camera_module.py import DayAndNightAnalyzer, Camera
-# from cnn_model_for_pi.py import RaspiPredictor
+from Camera.camera_module import DayAndNightAnalyzer, Camera
+from Camera.cnn_model_for_pi import RaspiPredictor
 
 # Global variables
 # Initialization sensor objects and gui
@@ -82,25 +82,25 @@ def update_camera_image(self, image_path):
     self.camera_canvas.image = photo
 
 def camera_and_predictor():
-    camera_analyzer.start_timed_pictures()
+    DayAndNightAnalyzer.start_timed_pictures()
     while True:
 
         # Wait for a new image to be taken
-        time.sleep(picture_interval_seconds)
+        time.sleep(Camera.picture_interval_seconds)
 
         #Fetching latest image
         image_files = glob.glob("home/Pi/Pictures/prediction/*.jpg")
         if image_files:
             latest_image = max(image_files, key=os.path.getctime)
-            brightness = camera_analyzer.analyze_image(latest_image)
-            prediction = predictor.predict_image(latest_image)
+            brightness = DayAndNightAnalyzer.analyze_image(latest_image)
+            prediction = RaspiPredictor.predict_image(latest_image)
 
             update_camera_image(latest_image)
 
             if prediction == "Clear":
-                prediction_image = weather_images['sunny']
+                prediction_image = gui.load_images('sunny')
             elif prediction == "Cloudy":
-                prediction_image = weather_images['cloud']
+                prediction_image = GUI.load_images('cloud')
             else:
                 prediction_image = None
             
