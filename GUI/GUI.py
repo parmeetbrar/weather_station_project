@@ -57,7 +57,7 @@ class ClimateControlGUI():
         self.root.grid_columnconfigure(2, weight=1)
 
     def setup_variables(self):
-         '''Set up global variables and define string variables.'''
+        '''Set up global variables and define string variables.'''
         self.base_folder = "GUI"
         self.outdoor_temp_var = StringVar()
         self.outdoor_humidity_var = StringVar()
@@ -150,6 +150,43 @@ class ClimateControlGUI():
         for i, text in enumerate(toggle_texts):
             toggle = self.create_toggle(self.indoor_frame, text)
             toggle.grid(row=i+2, column=0, columnspan=2, sticky="ew")
+        
+        # Toggle switch for power saving mode
+        self.energy_saving_toggle = self.create_energy_saving_toggle(self.indoor_frame, "Energy Saving Mode")
+        self.energy_saving_toggle.grid(row=10, column=0, columnspan=2, sticky="ew")
+    
+    def create_energy_saving_toggle(self, parent, text):
+        '''Create a toggle switch button for energy-saving mode'''
+        var = IntVar(value=0)
+        toggle = Label(parent, text=text, relief="raised", width=20, bg="red")
+        toggle.var = var
+
+        def on_click(event):
+            if toggle.var.get() == 0:
+                toggle.config(relief="sunken", bg="green")
+                toggle.var.set(1)
+                self.activate_energy_saving_mode()
+            else:
+                toggle.config(relief="raised", bg="red")
+                toggle.var.set(0)
+                self.deactivate_energy_saving_mode()
+
+        toggle.bind("<Button-1>", on_click)
+        return toggle
+    
+    def activate_energy_saving_mode(self):
+        '''Activates energy saving mode by changing GUI colors and increasing refresh interval.'''
+        self.root.config(bg='dark grey')  # Simulate reduced brightness
+        global refresh_time
+        refresh_time = max(refresh_time, 10000)  # Set a minimum 10-second refresh interval
+        self.refresh_time_var.set(f"{refresh_time/1000} s")
+
+    def deactivate_energy_saving_mode(self):
+        '''Deactivates energy saving mode by reverting GUI colors and refresh interval.'''
+        self.root.config(bg='light grey')  # Revert to normal brightness
+        global refresh_time
+        refresh_time = 5000  # Reset to default refresh interval
+        self.refresh_time_var.set(f"{refresh_time/1000} s")            
 
     def create_image_frame(self):
         '''Create and set up the frame for displaying camera images.'''
