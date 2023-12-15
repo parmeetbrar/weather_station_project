@@ -1,5 +1,5 @@
 # Weather Station/Smart Home Project
-## Still working on this
+
 The project utilizes a Raspberry Pi along with some simple sensors to develop a weather station/smart home device. The features of this project present the user with outdoor weather conditions and indoor temperature conditions on a graphical user interface. Additionaly the interface allows the user to control indoor heating, cooling and lighting. The heating, cooling and lighting controls would need to be intigrated with physical control devices in the home this device is being implimented in. The major emphasis is on gathering/analyzing data and control algorithms of indoor conditions.
 
 ## Features
@@ -15,23 +15,10 @@ The project utilizes a Raspberry Pi along with some simple sensors to develop a 
 Using image processing and a CNN model, analyze sky photos to detect clear, overcast, or wet conditions, as well as day or night.
 3. Lighting and Temperature Control:
 Using LEDs, simulate dynamic lighting and temperature control depending on user input and sensor data.
-4. Air Quality Monitoring:
-Determine the outdoor air quality.
-5. Graphical User Interface (GUI):
+4. Graphical User Interface (GUI):
 A user-friendly GUI allows the user to access real-time weather data, and control indoor heating, cooling, and lighting
-6. Energy-Saving Mode:
+5. Energy-Saving Mode:
 Reduce energy usage and enhance environmental sustainability.
-
-## Hardware
-
-1. Raspberry Pi 4B
-2. BME280 Sensor
-3. Adafruit MiCS5524 air quality sensor
-4. Magnetic reed switch and magnet
-5. Raspberry Pi camera
-6. Lead lights
-7. Resistors
-8. Breadboard
 
 ## Usage
 
@@ -50,32 +37,139 @@ Reduce energy usage and enhance environmental sustainability.
                     *source **your_environment_name**/bin/activate*
 5. Run the *main.py* script using RaspberryPi IDE or *main.exe* on the RaspberryPi to start the weather station.
 
+## Hardware
+
+- Raspberry Pi 4B
+- BME280 Sensor
+- Adafruit MiCS5524 air quality sensor
+- Magnetic reed switch and magnet
+- Raspberry Pi camera
+- Lead lights
+- Resistors
+- Breadboard
+
 ## Documentation
 
 ### External Libraries
+
 In order to install external libraries, activate your virtual environment and enter the codes for the libraries listed below:
+
 1. GPIO: Library for General Purpose Input/Output
-        *sudo apt-get install python3-rpi.gpio*
+
+   ```bash
+   *sudo apt-get install python3-rpi.gpio*
+   ```
+
 2. smbus2: Library for interfacing with sensors
-        *pip3 install smbus2*
+
+   ```bash
+   *pip3 install smbus2*
+   ```
+
 3. BME280: Library for using BME280 sensor
-        *pip3 install RPi.bme280*
+
+   ``` bash
+   *pip3 install RPi.bme280*
+   ```
+
 4. Pillow: Image processing library
-        *pip3 install Pillow*
+
+   ```bash
+   *pip3 install Pillow*
+   ```
+
 5. OpenCV (cv2): Library of functions aimed at real-time
-        *pip3 install opencv-python-headless
+
+   ```bash
+   *pip3 install opencv-python-headless
+   ```
+
 6. Numpy: Library that adds support for multi-dimensional arrays, matrices and high-level mathematical functions
-        *pip3 install numpy*
+
+   ```bash
+   *pip3 install numpy*
+   ```
+
 7. TensorFlow Lite (TFLite): Deep learning framework for on-device interface
-        *pip3 install tflite-runtime*
+
+   ```bash
+   *pip3 install tflite-runtime*
+   ```
+
+### Imports
+
+1. General imports
+
+   ```python
+   import time
+   import math
+   import numpy as np
+   import threading
+   import os
+   ```
+
+2. Sensor Imports
+
+   Imports used in the specific files that impliment the following sensors
+
+   ```python
+   # Camera imports
+   import subprocess
+   import time
+   import datetime
+   import cv2
+   import glob
+   import RPi.GPIO as GPIO
+   import tensorflow as tf
+   from keras.preprocessing.image import ImageDataGenerator
+   from keras.preprocessing import image
+   import tflite_runtime.interpreter as tflite
+   from PIL import Image
+   ```
+
+   ```python
+   # Anemometer imports
+   import RPi.GPIO as GPIO
+   ```
+
+   ```python
+   # BME280 sensor imports
+   import smbus2
+   import bme280
+   ```
+
+   ``` python
+   #Air Quality sensor imports
+   from gpiozero import MCP3008
+   ```
+
+   ```python
+   # Control simulation imports
+   from gpiozero import LED
+   ```
+
+3. GUI imports
+
+   ```python
+
+   from tkinter import Tk, Label, Scale, HORIZONTAL, LabelFrame, Button, StringVar, IntVar, Canvas, Toplevel, LEFT
+   from PIL import Image, ImageTk
+   import random
+   import os
+   from camera_module_new import Camera, DayAndNightAnalyzer
+   from cnn_model_for_pi import RaspiPredictor
+   import glob
+   ```
 
 ## License
 
-The project is licensed under UBC License.
+This project is licensed under the UBC GitHub License.
 
-## Acknowledgement:
+## Acknowledgement
 
-Many thanks to the open-source community and ChatGPT for supplying libraries and resources that were used in this project.
+- This project utilizes open-source libraries and resources from the community.
+- Information on raspberry pi programming and weather monitoring using raspberry pi was used from [raspberrypi.org](https://www.raspberrypi.org/).
+- ChatGPT was used for providing coding help during the development process and assisting with debugging
 
 ## Authors
 
