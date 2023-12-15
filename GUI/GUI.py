@@ -1,4 +1,4 @@
-#######################################################################################################################
+#####################################################################################################################
 
 # Project: Weather Station Project
 # File: Graphical User Interface (GUI)
@@ -15,6 +15,9 @@ from tkinter import Tk, Label, Scale, HORIZONTAL, LabelFrame, Button, StringVar,
 from PIL import Image, ImageTk
 import random
 import os
+from camera_module_new import Camera, DayAndNightAnalyzer
+from cnn_model_for_pi import RaspiPredictor
+import glob
 
 # Global Variables
 temp_outdoor = None
@@ -52,6 +55,11 @@ class ClimateControlGUI():
         self.create_refresh_button_up()
         self.create_refresh_button_down()
         self.create_refresh_button()
+        self.extreme_weather_notified = False
+       # model_path = '/home/Pi/Desktop/GUINew/cloud_image_model.tflite'
+       # self.predictor = RaspiPredictor(model_path)
+       # self.camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds=1800)
+       # self.update_camera_image_and_analyze()
 
     def setup_grid(self):
         '''Set up row and column configuration'''
@@ -332,6 +340,38 @@ class ClimateControlGUI():
             conditions.append('wind')
         return conditions
     
+    def update_camera_image_and_predict(self, image_path, prediction):
+        '''
+        Update the camera image in the GUI with the latest picture and display the weather prediction.
+        Args:   image_path (str): The file path of the latest image.
+                prediction (str): The prediction result (e.g., "Clear" or "Cloudy").
+        '''
+        # Update the camera image
+        img = Image.open(image_path)
+        img = img.resize((760, 240), Image.Resampling.LANCZOS)
+        photo = ImageTk.PhotoImage(img)
+        self.camera_canvas.create_image(380, 120, image=photo)
+        self.camera_canvas.image = photo  # Keep a reference
+
+        # Update the weather condition based on the prediction
+        self.update_weather_condition_based_on_prediction(prediction)
+            
+    def update_weather_condition_based_on_prediction(self, prediction):
+        '''
+        Update the weather condition on the GUI based on the image prediction.
+        Args: prediction: predicts clear or cloudy by looking at images
+        '''
+        if prediction == "Clear":
+            prediction_image = self.weather_images['sunny']
+        elif prediction == "Cloudy":
+            prediction_image = self.weather_images['cloud']
+        else:
+            return  # No update if prediction is not clear or cloudy
+
+        # Display the predicted weather condition
+        self.weather_labels[0].config(image=prediction_image)
+        self.weather_labels[0].image = prediction_image
+
     def check_for_extreme_weather(self):
         ''' Check the current weather data against the thresholds and display notifications for extreme conditions. '''
         temp = float(self.outdoor_temp_var.get().rstrip('°C'))
@@ -339,15 +379,21 @@ class ClimateControlGUI():
         pressure = float(self.outdoor_pressure_var.get().rstrip(' hPa'))
 
         message = ""
+        extreme_conditions = False
         if not (EXTREME_TEMPERATURE_THRESHOLD[0] <= temp <= EXTREME_TEMPERATURE_THRESHOLD[1]):
             message += f"Extreme Temperature Alert: {temp}°C\n"
+            extreme_conditions = True
         if not (EXTREME_HUMIDITY_THRESHOLD[0] <= humidity <= EXTREME_HUMIDITY_THRESHOLD[1]):
             message += f"Extreme Humidity Alert: {humidity}%\n"
+            extreme_conditions = True
         if not (EXTREME_PRESSURE_THRESHOLD[0] <= pressure <= EXTREME_PRESSURE_THRESHOLD[1]):
             message += f"Extreme Pressure Alert: {pressure} hPa\n"
-
-        if message:
-            self.show_notification(message)
+            extreme_conditions = True
+        if extreme_conditions and not self.extreme_weather_notified:
+            self.show_notification_extreme_weather(message)
+            self.extreme_weather_notified = True
+        elif not extreme_conditions and self.extreme_weather_notified:
+            self.extreme_weather_notified = False
 
     def show_notification_extreme_weather(self, message):
         '''

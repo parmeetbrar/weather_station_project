@@ -70,7 +70,7 @@ def update_data():
         time.sleep(GUI.refresh_time)
 
 def camera_and_predictor():
-
+    ''' Initialises Camera and Predictor Model '''
     picture_interval_seconds = 60
     model_path = '/home/Pi/Desktop/GUINew/cloud_image_model.tflite'
     camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds)
@@ -95,6 +95,7 @@ def main():
     Main function for the weather station project. Initialize all the sensors. Start the multithreading process to
     cocurrently update the GUI and Collect data from sensors and cameras
     '''
+    #app = ClimateControlGUI()
     thread1=threading.Thread(target=application)
     thread2= threading.Thread(target=update_data)
     thread3= threading.Thread(target=camera_and_predictor)
