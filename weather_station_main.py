@@ -70,16 +70,17 @@ def update_data():
         time.sleep(GUI.refresh_time)
 
 def camera_and_predictor():
+    ''' Initialises Camera and Predictor Model '''
     picture_interval_seconds = 60
     model_path = '/home/Pi/Desktop/GUINew/cloud_image_model.tflite'
     camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds)
     predictor = RaspiPredictor(model_path)
-    
+
     while True:
         camera_analyzer.start_timed_pictures()
         # Wait for a new image to be taken
         time.sleep(picture_interval_seconds)
-        
+
         #Fetching latest image
         image_files = glob.glob("home/Pi/Pictures/prediction/*.jpg")
         if image_files:
@@ -102,6 +103,7 @@ def main():
     thread1.start()
     thread2.start()
     thread3.start()
+
     thread1.join()
     thread2.join()
     thread3.join()

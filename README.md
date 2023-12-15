@@ -52,7 +52,22 @@ Reduce energy usage and enhance environmental sustainability.
 
 ## Documentation
 
-For instructions regarding setup, hardware requirements, and usage, please refer to documentation.
+### External Libraries
+In order to install external libraries, activate your virtual environment and enter the codes for the libraries listed below:
+1. GPIO: Library for General Purpose Input/Output
+        *sudo apt-get install python3-rpi.gpio*
+2. smbus2: Library for interfacing with sensors
+        *pip3 install smbus2*
+3. BME280: Library for using BME280 sensor
+        *pip3 install RPi.bme280*
+4. Pillow: Image processing library
+        *pip3 install Pillow*
+5. OpenCV (cv2): Library of functions aimed at real-time
+        *pip3 install opencv-python-headless
+6. Numpy: Library that adds support for multi-dimensional arrays, matrices and high-level mathematical functions
+        *pip3 install numpy*
+7. TensorFlow Lite (TFLite): Deep learning framework for on-device interface
+        *pip3 install tflite-runtime*
 
 ## License
 
