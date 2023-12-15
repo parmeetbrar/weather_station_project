@@ -7,7 +7,7 @@
 # Purpose:          To measure air quality using Adafruit Industries 3199 sensor       
 # Description:      This script reads the analog voltage off of the output pin of the sensor and converts it to ppm 
 #                   values for each gas. It then prints the ppm values for each gas to the console.
-# Date last edited: 2023/12/7
+# Date last edited: 2023/12/14
 
 #######################################################################################################################
 
@@ -42,10 +42,14 @@ class AirQualitySensor(Sensor):
         '''
         input_channel = 0
         air_quality_sensor = MCP3008(channel=input_channel)
-        
-        if self.air_quality_sensor.value > 0.5:
-            print(f"Warning: Low air quality detected by {self.name} sensor!")
-        return round(self.air_quality_sensor.value, 4)
+        air_quality = self.air_quality_sensor.value
+        if air_quality < 0.4:
+            air_quality_level = "Good"
+        elif 0.4 <= air_quality < 0.7:
+            air_quality_level = "Fair"
+        else:
+            air_quality_level = "Poor"
+        return air_quality_level
 
 # Functions
 def main():
