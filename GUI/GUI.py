@@ -30,6 +30,7 @@ EXTREME_TEMPERATURE_THRESHOLD = (0, 35)  # Example range in Celsius
 EXTREME_HUMIDITY_THRESHOLD = (20, 80)  # Example range in percentage
 EXTREME_PRESSURE_THRESHOLD = (980, 1020)  # Example range in hPa
 
+
 # Classes
 class ClimateControlGUI():
     ''' 
@@ -69,6 +70,7 @@ class ClimateControlGUI():
         self.outdoor_humidity_var = StringVar()
         self.outdoor_wind_var = StringVar()
         self.outdoor_pressure_var = StringVar()
+        self.outdoor_air_qualiy = StringVar()
         self.current_temp_var = StringVar()
         self.desired_temp_var = StringVar()
         self.refresh_time_var = StringVar()
@@ -112,7 +114,7 @@ class ClimateControlGUI():
         Label(self.outdoor_frame, textvariable=self.outdoor_pressure_var, width=20).grid(row=3, column=1, sticky="w")
 
         Label(self.outdoor_frame, text="Air Quality:").grid(row=4, column=0, sticky="e")
-        Label(self.outdoor_frame, textvariable=self.outdoor_pressure_var, width=20).grid(row=4, column=1, sticky="w")
+        Label(self.outdoor_frame, textvariable=self.outdoor_air_qualiy, width=20).grid(row=4, column=1, sticky="w")
 
         # Weather condition symbol labels
         self.weather_labels = [Label(self.outdoor_frame) for _ in range(3)]
@@ -250,7 +252,7 @@ class ClimateControlGUI():
         global refresh_time
         if refresh_time < 120000:
             refresh_time += 1000
-            self.refresh_time_var.set(f"{refresh_time} s")
+            self.refresh_time_var.set(f"{refresh_time/1000} s")
     
     def create_refresh_button_down(self):
         ''' Create refresh button.'''
@@ -275,6 +277,7 @@ class ClimateControlGUI():
         self.outdoor_humidity_var.set(f"{humidity}%")
         self.outdoor_wind_var.set(f"{wind_speed} km/h")
         self.outdoor_pressure_var.set(f"{pressure_outdoor} hPa")
+        self.outdoor_air_qualiy.set(f"{air_quality}")
 
         # Update indoor temperature display
         self.current_temp_var.set(f"{temp_indoor}°C")
@@ -332,6 +335,7 @@ class ClimateControlGUI():
             conditions.append('wind')
         return conditions
     
+
     def check_for_extreme_weather(self):
         ''' Check the current weather data against the thresholds and display notifications for extreme conditions. '''
         temp = float(self.outdoor_temp_var.get().rstrip('°C'))
@@ -348,19 +352,23 @@ class ClimateControlGUI():
 
         if message:
             self.show_notification(message)
+        
 
+    # commenting this out for now to debugging
     def show_notification_extreme_weather(self, message):
         '''
         Display a notification message in the GUI.
         Args: self
               message (str): A string to be displayed in the notification message 
         '''
+        '''
         notification_window = Toplevel(self.root)
         notification_window.title("Weather Alert")
         notification_window.geometry("300x200")
         Label(notification_window, text=message, justify=LEFT).pack(pady=20)
         Button(notification_window, text="Dismiss", command=notification_window.destroy).pack()
-        
+        '''
+        pass
 
     def create_toggle(self, parent, text):
         '''

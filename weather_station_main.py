@@ -16,7 +16,7 @@ from BME280_sensor import BME280SensorI2C
 from air_quality import AirQualitySensor
 from Anemometer import Anemometer
 # from camera_module import Camera
-import GUI
+from GUI import GUI
 import threading
 import time
 import random
@@ -28,11 +28,13 @@ from Camera.camera_module import DayAndNightAnalyzer, Camera
 from Camera.cnn_model_for_pi import RaspiPredictor
 
 # Global variables
+air_quality = None
+sensor_reading_time = 1
 # Initialization sensor objects and gui
-bme280_indoor = BME280SensorI2C()
-bme280_outdoor = BME280SensorI2C()
-anemometer = Anemometer("anemometer", 1.125, GUI.update_interval, 17)
-air_quality_outdoor =  AirQualitySensor("air_quality_outdoor", 0)
+#bme280_indoor = BME280SensorI2C()
+#bme280_outdoor = BME280SensorI2C()
+#anemometer = Anemometer("anemometer", 1.125, GUI.update_interval, 17)
+#air_quality_outdoor =  AirQualitySensor("air_quality_outdoor", 0)
 # camera_outdoor = Camera()
 # gui = Gui()
 
@@ -45,6 +47,13 @@ air_quality_outdoor =  AirQualitySensor("air_quality_outdoor", 0)
 
 
 # Functions
+def air_quality_data():
+    global air_quality
+    air_quality_sensor = AirQualitySensor("Air Quality Sensor", 0)
+
+    while True:
+        air_quality = air_quality_sensor.read_sensor_data()
+        time.sleep(sensor_reading_time)
 def application():
     '''Initialize the GUI application. This function is for the GUI to run in a thread'''
     GUI.temp_outdoor = random.randrange(-10, 40)
@@ -67,12 +76,13 @@ def update_data():
         GUI.humidity = 1
         GUI.wind_speed = 1
         GUI.pressure_outdoor = 1
-        time.sleep(GUI.refresh_time)
+        GUI.air_quality = air_quality
+        time.sleep(sensor_reading_time)
 
 def camera_and_predictor():
 
     picture_interval_seconds = 60
-    model_path = '/home/Pi/Desktop/GUINew/cloud_image_model.tflite'
+    model_path = './Camera/cloud_image_model.tflite'
     camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds)
     predictor = RaspiPredictor(model_path)
 
@@ -98,14 +108,17 @@ def main():
     thread1=threading.Thread(target=application)
     thread2= threading.Thread(target=update_data)
     thread3= threading.Thread(target=camera_and_predictor)
+    thread_air_quality = threading.Thread(target=air_quality_data)
     
     thread1.start()
     thread2.start()
     thread3.start()
+    thread_air_quality.start()
 
     thread1.join()
     thread2.join()
     thread3.join()
+    thread_air_quality.join()
 
 if __name__ == "__main__":
     main()
