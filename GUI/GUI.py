@@ -21,6 +21,7 @@ temp_outdoor = None
 temp_indoor = None
 humidity = None
 wind_speed = None
+air_quality = None
 pressure_outdoor = None
 refresh_time = None
 
@@ -57,8 +58,8 @@ class ClimateControlGUI():
         self.root.grid_columnconfigure(2, weight=1)
 
     def setup_variables(self):
-         '''Set up global variables and define string variables.'''
-        self.base_folder = "GUI"
+        '''Set up global variables and define string variables.'''
+        self.base_folder = "Desktop\MECH 524\weather_station_project\GUI"
         self.outdoor_temp_var = StringVar()
         self.outdoor_humidity_var = StringVar()
         self.outdoor_wind_var = StringVar()
@@ -86,7 +87,7 @@ class ClimateControlGUI():
 
     def configure_outdoor_frame(self):
         '''Configure the interior of the frames for resizing'''
-        for i in range(5):  # Assuming a maximum of 5 rows in any frame
+        for i in range(6):  # Assuming a maximum of 5 rows in any frame
             self.outdoor_frame.grid_rowconfigure(i, weight=1)
         self.outdoor_frame.grid_columnconfigure(0, weight=1)
         self.outdoor_frame.grid_columnconfigure(1, weight=1)
@@ -105,10 +106,13 @@ class ClimateControlGUI():
         Label(self.outdoor_frame, text="Pressure:").grid(row=3, column=0, sticky="e")
         Label(self.outdoor_frame, textvariable=self.outdoor_pressure_var, width=20).grid(row=3, column=1, sticky="w")
 
+        Label(self.outdoor_frame, text="Air Quality:").grid(row=4, column=0, sticky="e")
+        Label(self.outdoor_frame, textvariable=self.outdoor_pressure_var, width=20).grid(row=4, column=1, sticky="w")
+
         # Weather condition symbol labels
         self.weather_labels = [Label(self.outdoor_frame) for _ in range(3)]
         for i, label in enumerate(self.weather_labels):
-            label.grid(row=4, column=i, pady=10, sticky="w")
+            label.grid(row=5, column=i, pady=10, sticky="w")
 
     def update_indoor_temperature(self,slider_value):
         '''

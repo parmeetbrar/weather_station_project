@@ -1,21 +1,40 @@
-# Weather Station Project
-An all-inclusive weather station project developed on a Raspberry Pi 4 is included in this repository. An extensive set of features designed to provide control and monitoring of the environment is the primary goal of the project. The major emphasis is on gathering, analyzing, and providing a user interface for environmental data, both current and historical.
+# Weather Station/Smart Home Project
 
-## Features:
-1. Data Collection and Logging: 
-Using BME280 sensors, continuously log indoor and outdoor temperature, humidity, light intensity, and air quality.
-2. Sky Condition Analysis: 
+The project utilizes a Raspberry Pi along with some simple sensors to develop a weather station/smart home device. The features of this project present the user with outdoor weather conditions and indoor temperature conditions on a graphical user interface. Additionaly the interface allows the user to control indoor heating, cooling and lighting. The heating, cooling and lighting controls would need to be intigrated with physical control devices in the home this device is being implimented in. The major emphasis is on gathering/analyzing data and control algorithms of indoor conditions.
+
+## Features
+
+1. Data Collection and Logging of the following information:
+    - Temperature: Indoor and outdoor
+    - Humidity: Indoor and outdoor
+    - Pressure: Outdoor
+    - Air Quality: Outdoor
+    - Wind speed: Outdoor
+    - Image: Outdoor
+2. Sky Condition Analysis:
 Using image processing and a CNN model, analyze sky photos to detect clear, overcast, or wet conditions, as well as day or night.
-3. Lighting and Temperature Control: 
-Using LEDs, simulate dynamic lighting and temperature control depending on sensor data.
-4. Air Quality Monitoring: 
-Determine the quality of the air in both indoor and outdoor locations.
-5. Graphical User Interface (GUI): 
-A user-friendly GUI allows you to access real-time weather data, user control choices, and historical data visualization.
-6. Energy-Saving Mode: 
+3. Lighting and Temperature Control:
+Using LEDs, simulate dynamic lighting and temperature control depending on user input and sensor data.
+4. Air Quality Monitoring:
+Determine the outdoor air quality.
+5. Graphical User Interface (GUI):
+A user-friendly GUI allows the user to access real-time weather data, and control indoor heating, cooling, and lighting
+6. Energy-Saving Mode:
 Reduce energy usage and enhance environmental sustainability.
 
-## Usage:
+## Hardware
+
+1. Raspberry Pi 4B
+2. BME280 Sensor
+3. Adafruit MiCS5524 air quality sensor
+4. Magnetic reed switch and magnet
+5. Raspberry Pi camera
+6. Lead lights
+7. Resistors
+8. Breadboard
+
+## Usage
+
 1. Clone the repository to your RaspberryPi.
     In bash
     git clone git@github.ubc.ca:MECH-524-101-2023W1/weather_station_project.git
@@ -32,19 +51,19 @@ Reduce energy usage and enhance environmental sustainability.
 5. Run the *main.py* script using RaspberryPi IDE or *main.exe* on the RaspberryPi to start the weather station.
 
 ## Documentation
+
 For instructions regarding setup, hardware requirements, and usage, please refer to documentation.
 
 ## License
+
 The project is licensed under UBC License.
 
 ## Acknowledgement:
+
 Many thanks to the open-source community and ChatGPT for supplying libraries and resources that were used in this project.
 
 ## Authors
+
 1. Parmeet Brar:        Student ID: 20877288
 2. Priyanshu Bhateja:   Student ID: 81567786
 3. Halvard Ng:          Srudent ID: 41277492
-
-
-
-
