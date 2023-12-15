@@ -329,9 +329,7 @@ class ClimateControlGUI():
         return conditions
     
     def check_for_extreme_weather(self):
-        '''
-        Check the current weather data against the thresholds and display notifications for extreme conditions.
-        '''
+        ''' Check the current weather data against the thresholds and display notifications for extreme conditions. '''
         temp = float(self.outdoor_temp_var.get().rstrip('°C'))
         humidity = float(self.outdoor_humidity_var.get().rstrip('%'))
         pressure = float(self.outdoor_pressure_var.get().rstrip(' hPa'))
