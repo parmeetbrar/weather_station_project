@@ -19,16 +19,18 @@ import os
 # Global Variables
 temp_outdoor = None
 temp_indoor = None
-humidity = None
+humidity_indoor = None
+humidity_outdoor = None
 wind_speed = None
 air_quality = None
 pressure_outdoor = None
 refresh_time = None
 
 # Threshholds
-EXTREME_TEMPERATURE_THRESHOLD = (0, 35)  # Example range in Celsius
-EXTREME_HUMIDITY_THRESHOLD = (20, 80)  # Example range in percentage
-EXTREME_PRESSURE_THRESHOLD = (980, 1020)  # Example range in hPa
+
+EXTREME_TEMPERATURE_THRESHOLD = (500, 600)  # Example range in Celsius
+EXTREME_HUMIDITY_THRESHOLD = (500, 500)  # Example range in percentage
+EXTREME_PRESSURE_THRESHOLD = (9800, 10200)  # Example range in hPa
 
 
 # Classes
@@ -70,9 +72,9 @@ class ClimateControlGUI():
         self.outdoor_humidity_var = StringVar()
         self.outdoor_wind_var = StringVar()
         self.outdoor_pressure_var = StringVar()
-        self.outdoor_air_qualiy = StringVar()
+        self.outdoor_air_quality = StringVar()
         self.current_temp_var = StringVar()
-        self.desired_temp_var = StringVar()
+        self.indoor_humidity_var = StringVar()
         self.refresh_time_var = StringVar()
 
     def load_images(self):
@@ -114,7 +116,7 @@ class ClimateControlGUI():
         Label(self.outdoor_frame, textvariable=self.outdoor_pressure_var, width=20).grid(row=3, column=1, sticky="w")
 
         Label(self.outdoor_frame, text="Air Quality:").grid(row=4, column=0, sticky="e")
-        Label(self.outdoor_frame, textvariable=self.outdoor_air_qualiy, width=20).grid(row=4, column=1, sticky="w")
+        Label(self.outdoor_frame, textvariable=self.outdoor_air_quality, width=20).grid(row=4, column=1, sticky="w")
 
         # Weather condition symbol labels
         self.weather_labels = [Label(self.outdoor_frame) for _ in range(3)]
@@ -126,7 +128,9 @@ class ClimateControlGUI():
         Function to update indoor temperature display based on slider value
         Args: slider_value (int): the current value of the temperature adjustment slider.
         '''
-        self.desired_temp_var.set(f"{slider_value}°C")
+        # Add code for desired temperature
+        #self.desired_temp_var.set(f"{slider_value}°C")
+        pass
 
     def create_indoor_frame(self):
         '''Create and setup the indoor frame.'''
@@ -147,20 +151,20 @@ class ClimateControlGUI():
         Label(self.indoor_frame, text="Current Temperature:").grid(row=0, column=0, sticky="e")
         current_temp_display = Label(self.indoor_frame, textvariable=self.current_temp_var, width=20)
         current_temp_display.grid(row=0, column=1, sticky="w")
+        
+        Label(self.indoor_frame, text="Humidity:").grid(row=1, column=0, sticky="e")
+        desired_temp_display = Label(self.indoor_frame, textvariable=self.indoor_humidity_var, width=20)
+        desired_temp_display.grid(row=1, column=1, sticky="w")
 
-        Label(self.indoor_frame, text="Adjust Temperature:").grid(row=1, column=0, sticky="e")
+        Label(self.indoor_frame, text="Desired Temperature:").grid(row=2, column=0, sticky="e")
         Scale(self.indoor_frame, from_=0, to=40, orient=HORIZONTAL, variable=IntVar(),
-            command=self.update_indoor_temperature).grid(row=1, column=1, sticky="ew")
-
-        Label(self.indoor_frame, text="Desired Temperature:").grid(row=8, column=0, sticky="e")
-        desired_temp_display = Label(self.indoor_frame, textvariable=self.desired_temp_var, width=20)
-        desired_temp_display.grid(row=8, column=1, sticky="w")
+            command=self.update_indoor_temperature).grid(row=2, column=1, sticky="ew")
 
         # Indoor toggle switches
         toggle_texts = ["Auto", "Heat On", "AC", "Auto Lights"]
         for i, text in enumerate(toggle_texts):
             toggle = self.create_toggle(self.indoor_frame, text)
-            toggle.grid(row=i+2, column=0, columnspan=2, sticky="ew")
+            toggle.grid(row=i+3, column=0, columnspan=2, sticky="ew")
         
         # Toggle switch for power saving mode
         self.energy_saving_toggle = self.create_energy_saving_toggle(self.indoor_frame, "Energy Saving Mode")
@@ -274,16 +278,18 @@ class ClimateControlGUI():
     def refresh_data(self):
         '''Method to refresh data using most recent data'''
         self.outdoor_temp_var.set(f"{temp_outdoor}°C")
-        self.outdoor_humidity_var.set(f"{humidity}%")
+        self.outdoor_humidity_var.set(f"{humidity_outdoor}%")
         self.outdoor_wind_var.set(f"{wind_speed} km/h")
         self.outdoor_pressure_var.set(f"{pressure_outdoor} hPa")
-        self.outdoor_air_qualiy.set(f"{air_quality}")
+        self.outdoor_air_quality.set(f"{air_quality}")
+
 
         # Update indoor temperature display
         self.current_temp_var.set(f"{temp_indoor}°C")
+        self.indoor_humidity_var.set(f"{humidity_indoor}%")
         
         # Determine weather conditions based on sensor values
-        current_conditions = self.determine_weather_condition(temp_indoor, humidity, wind_speed)
+        current_conditions = self.determine_weather_condition(temp_outdoor, humidity_outdoor, wind_speed)
 
         # Check for extreme weather conditions
         self.check_for_extreme_weather()
@@ -335,7 +341,6 @@ class ClimateControlGUI():
             conditions.append('wind')
         return conditions
     
-
     def check_for_extreme_weather(self):
         ''' Check the current weather data against the thresholds and display notifications for extreme conditions. '''
         temp = float(self.outdoor_temp_var.get().rstrip('°C'))
@@ -351,10 +356,8 @@ class ClimateControlGUI():
             message += f"Extreme Pressure Alert: {pressure} hPa\n"
 
         if message:
-            self.show_notification(message)
-        
+            self.show_notification_extreme_weather(message)
 
-    # commenting this out for now to debugging
     def show_notification_extreme_weather(self, message):
         '''
         Display a notification message in the GUI.
