@@ -11,7 +11,7 @@
 #######################################################################################################################
 
 # Imports
-from tkinter import Tk, Label, Scale, HORIZONTAL, LabelFrame, Button, StringVar, IntVar, Canvas
+from tkinter import Tk, Label, Scale, HORIZONTAL, LabelFrame, Button, StringVar, IntVar, Canvas, Toplevel, LEFT
 from PIL import Image, ImageTk
 import random
 import os
@@ -21,8 +21,14 @@ temp_outdoor = None
 temp_indoor = None
 humidity = None
 wind_speed = None
+air_quality = None
 pressure_outdoor = None
 refresh_time = None
+
+# Threshholds
+EXTREME_TEMPERATURE_THRESHOLD = (0, 35)  # Example range in Celsius
+EXTREME_HUMIDITY_THRESHOLD = (20, 80)  # Example range in percentage
+EXTREME_PRESSURE_THRESHOLD = (980, 1020)  # Example range in hPa
 
 # Classes
 class ClimateControlGUI():
@@ -57,7 +63,7 @@ class ClimateControlGUI():
         self.root.grid_columnconfigure(2, weight=1)
 
     def setup_variables(self):
-         '''Set up global variables and define string variables.'''
+        '''Set up global variables and define string variables.'''
         self.base_folder = "GUI"
         self.outdoor_temp_var = StringVar()
         self.outdoor_humidity_var = StringVar()
@@ -86,7 +92,7 @@ class ClimateControlGUI():
 
     def configure_outdoor_frame(self):
         '''Configure the interior of the frames for resizing'''
-        for i in range(5):  # Assuming a maximum of 5 rows in any frame
+        for i in range(6):  # Assuming a maximum of 5 rows in any frame
             self.outdoor_frame.grid_rowconfigure(i, weight=1)
         self.outdoor_frame.grid_columnconfigure(0, weight=1)
         self.outdoor_frame.grid_columnconfigure(1, weight=1)
@@ -105,15 +111,18 @@ class ClimateControlGUI():
         Label(self.outdoor_frame, text="Pressure:").grid(row=3, column=0, sticky="e")
         Label(self.outdoor_frame, textvariable=self.outdoor_pressure_var, width=20).grid(row=3, column=1, sticky="w")
 
+        Label(self.outdoor_frame, text="Air Quality:").grid(row=4, column=0, sticky="e")
+        Label(self.outdoor_frame, textvariable=self.outdoor_pressure_var, width=20).grid(row=4, column=1, sticky="w")
+
         # Weather condition symbol labels
         self.weather_labels = [Label(self.outdoor_frame) for _ in range(3)]
         for i, label in enumerate(self.weather_labels):
-            label.grid(row=4, column=i, pady=10, sticky="w")
+            label.grid(row=5, column=i, pady=10, sticky="w")
 
     def update_indoor_temperature(self,slider_value):
         '''
         Function to update indoor temperature display based on slider value
-        Args: slider_value (int), the current value of the temperature adjustment slider.
+        Args: slider_value (int): the current value of the temperature adjustment slider.
         '''
         self.desired_temp_var.set(f"{slider_value}°C")
 
@@ -146,10 +155,56 @@ class ClimateControlGUI():
         desired_temp_display.grid(row=8, column=1, sticky="w")
 
         # Indoor toggle switches
-        toggle_texts = ["Auto", "Heat On", "AC", "Auto Lights", "Energy Saving Mode"]
+        toggle_texts = ["Auto", "Heat On", "AC", "Auto Lights"]
         for i, text in enumerate(toggle_texts):
             toggle = self.create_toggle(self.indoor_frame, text)
             toggle.grid(row=i+2, column=0, columnspan=2, sticky="ew")
+        
+        # Toggle switch for power saving mode
+        self.energy_saving_toggle = self.create_energy_saving_toggle(self.indoor_frame, "Energy Saving Mode")
+        self.energy_saving_toggle.grid(row=10, column=0, columnspan=2, sticky="ew")
+    
+    def create_energy_saving_toggle(self, parent, text):
+        '''
+        Function to create a toggle switch button for energy-saving mode
+        Args: self
+              parent (frame): The parent widget in which the toggle button will be placed
+              text (str): used as the label text for the toggle button
+        '''
+        var = IntVar(value=0)
+        toggle = Label(parent, text=text, relief="raised", width=20, bg="red")
+        toggle.var = var
+
+        def on_click(event):
+            ''' 
+            Function to engage or disengage energy power saving by pressing a button
+            Args: event, click event
+            '''
+            if toggle.var.get() == 0:
+                toggle.config(relief="sunken", bg="green")
+                toggle.var.set(1)
+                self.activate_energy_saving_mode()
+            else:
+                toggle.config(relief="raised", bg="red")
+                toggle.var.set(0)
+                self.deactivate_energy_saving_mode()
+
+        toggle.bind("<Button-1>", on_click)
+        return toggle
+    
+    def activate_energy_saving_mode(self):
+        '''Activates energy saving mode by changing GUI colors and increasing refresh interval.'''
+        self.root.config(bg='dark grey')  # Simulate reduced brightness
+        global refresh_time
+        refresh_time = max(refresh_time, 1800000)  # Set a minimum 30-minute refresh interval
+        self.refresh_time_var.set(f"{refresh_time/1000} s")
+
+    def deactivate_energy_saving_mode(self):
+        '''Deactivates energy saving mode by reverting GUI colors and refresh interval.'''
+        self.root.config(bg='light grey')  # Revert to normal brightness
+        global refresh_time
+        refresh_time = 5000  # Reset to default refresh interval
+        self.refresh_time_var.set(f"{refresh_time/1000} s")            
 
     def create_image_frame(self):
         '''Create and set up the frame for displaying camera images.'''
@@ -227,6 +282,9 @@ class ClimateControlGUI():
         # Determine weather conditions based on sensor values
         current_conditions = self.determine_weather_condition(temp_indoor, humidity, wind_speed)
 
+        # Check for extreme weather conditions
+        self.check_for_extreme_weather()
+
         # Update the weather condition images
         for label, condition in zip(self.weather_labels, current_conditions):
             label.config(image=self.weather_images[condition])
@@ -273,6 +331,36 @@ class ClimateControlGUI():
         if wind_speed > 25:
             conditions.append('wind')
         return conditions
+    
+    def check_for_extreme_weather(self):
+        ''' Check the current weather data against the thresholds and display notifications for extreme conditions. '''
+        temp = float(self.outdoor_temp_var.get().rstrip('°C'))
+        humidity = float(self.outdoor_humidity_var.get().rstrip('%'))
+        pressure = float(self.outdoor_pressure_var.get().rstrip(' hPa'))
+
+        message = ""
+        if not (EXTREME_TEMPERATURE_THRESHOLD[0] <= temp <= EXTREME_TEMPERATURE_THRESHOLD[1]):
+            message += f"Extreme Temperature Alert: {temp}°C\n"
+        if not (EXTREME_HUMIDITY_THRESHOLD[0] <= humidity <= EXTREME_HUMIDITY_THRESHOLD[1]):
+            message += f"Extreme Humidity Alert: {humidity}%\n"
+        if not (EXTREME_PRESSURE_THRESHOLD[0] <= pressure <= EXTREME_PRESSURE_THRESHOLD[1]):
+            message += f"Extreme Pressure Alert: {pressure} hPa\n"
+
+        if message:
+            self.show_notification(message)
+
+    def show_notification_extreme_weather(self, message):
+        '''
+        Display a notification message in the GUI.
+        Args: self
+              message (str): A string to be displayed in the notification message 
+        '''
+        notification_window = Toplevel(self.root)
+        notification_window.title("Weather Alert")
+        notification_window.geometry("300x200")
+        Label(notification_window, text=message, justify=LEFT).pack(pady=20)
+        Button(notification_window, text="Dismiss", command=notification_window.destroy).pack()
+        
 
     def create_toggle(self, parent, text):
         '''
