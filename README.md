@@ -1,5 +1,5 @@
 # Weather Station/Smart Home Project
-
+## Still working on this
 The project utilizes a Raspberry Pi along with some simple sensors to develop a weather station/smart home device. The features of this project present the user with outdoor weather conditions and indoor temperature conditions on a graphical user interface. Additionaly the interface allows the user to control indoor heating, cooling and lighting. The heating, cooling and lighting controls would need to be intigrated with physical control devices in the home this device is being implimented in. The major emphasis is on gathering/analyzing data and control algorithms of indoor conditions.
 
 ## Features
