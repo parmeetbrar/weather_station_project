@@ -16,6 +16,7 @@ import numpy as np
 import tflite_runtime.interpreter as tflite
 from PIL import Image
 import os
+import glob
 
 # Classes
 class RaspiPredictor:
@@ -71,26 +72,36 @@ class RaspiPredictor:
         prediction_index = np.argmax(output_data[0])
 
         # Map the prediction index to the corresponding class
-        categories = ["Clear", "Cloudy", "Rainy"]
-        return categories[prediction_index]
+        if prediction_index == 0:
+            return "Clear"
+        elif prediction_index == 1:
+            return "Cloudy"
+        elif prediction_index == 2:
+            return "Rainy"
 
-    def predict_images_in_directory(self, directory_path):
+    def find_latest_file(self, files):
         '''
         Method to predict the classes of all images in a specified directory.
 
         Arguments:  self
                     directory_path (str): Path to the directory containing images.
         '''
-        for img in os.listdir(directory_path):
-            prediction = self.predict_image(os.path.join(directory_path, img))
-            print(f'{img} = {prediction}')
+        latest_file = max(files, key=os.path.getmtime)
+        return latest_file
 
 # Usage
-model_path = '/home/Pi/Desktop/cloud_image_model.tflite'
+model_path = '/home/Pi/Desktop/GUINew/cloud_image_model.tflite'
 predictor = RaspiPredictor(model_path)
 
 # Predicting images in a directory
-path = '/home/Pi/Pictures/data_for_pi/prediction'
-predictor.predict_images_in_directory(path)
+path = '/home/Pi/Pictures/day_night/*.jpg'
+image_files = glob.glob(path)
+
+if image_files:
+    latest_image = predictor.find_latest_file(image_files)
+    prediction = predictor.predict_image(latest_image)
+    print(f"Prediction: {prediction}")
+else:
+    print("No image found")
 
 ######################################################## End of code #############################################################
