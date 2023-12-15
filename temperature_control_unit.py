@@ -32,11 +32,34 @@ class TemperatureControlUnit(Actuator):
         self.heater=heater
         self.fan=fan
         # Set the states of the unit
-        self.state=[CoolingCycle(),NeutralCycle(),HeatingCycle()]
+        self.state={1:CoolingCycle(),2:NeutralCycle(),3:HeatingCycle()}
         # Set initial state as neutral
         self.current_state=self.state[1]
         self.current_state.execute(heater,fan)
     
+    def temperature_control(self, current_temp,desired_temp,power_saver:bool):
+        '''Main control '''
+        temp_diff = 5 if power_saver else 0 
+        match self.current_state:
+            # Cooling State
+            case self.state.get(1):
+                if current_temp > (desired_temp + temp_diff - 1):
+                    self.set_to_neutral()
+
+            # Neutral State
+            case self.state.get(2):
+                if current_temp > (desired_temp + temp_diff + 3):
+                    self.set_to_cool()
+                elif current_temp < (desired_temp - temp_diff - 3):
+                    self.set_to_heat()
+                else:
+                    pass
+
+            # Heating State
+            case self.state.get(3):
+                if current_temp < (desired_temp - temp_diff + 1):
+                    self.set_to_neutral()
+        
     def set_to_cool(self):
         '''Set unit to cooling state'''
         self.current_state=self.state[0]
@@ -55,8 +78,8 @@ class TemperatureControlUnit(Actuator):
 
 class State:
     '''Parent class for the state machine. Contain methods for override in child class'''
-    def execute(self):
-        pass
+    def execute(self,heater,fan):
+        print("This method should be overridden by sub-classes")
 
 class HeatingCycle(State):
     '''Child class for the state machine. Contain methods for heating state operation'''
