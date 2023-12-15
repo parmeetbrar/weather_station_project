@@ -118,7 +118,7 @@ class ClimateControlGUI():
     def update_indoor_temperature(self,slider_value):
         '''
         Function to update indoor temperature display based on slider value
-        Args: slider_value (int), the current value of the temperature adjustment slider.
+        Args: slider_value (int): the current value of the temperature adjustment slider.
         '''
         self.desired_temp_var.set(f"{slider_value}°C")
 
@@ -161,12 +161,21 @@ class ClimateControlGUI():
         self.energy_saving_toggle.grid(row=10, column=0, columnspan=2, sticky="ew")
     
     def create_energy_saving_toggle(self, parent, text):
-        '''Create a toggle switch button for energy-saving mode'''
+        '''
+        Function to create a toggle switch button for energy-saving mode
+        Args: self
+              parent (frame): The parent widget in which the toggle button will be placed
+              text (str): used as the label text for the toggle button
+        '''
         var = IntVar(value=0)
         toggle = Label(parent, text=text, relief="raised", width=20, bg="red")
         toggle.var = var
 
         def on_click(event):
+            ''' 
+            Function to engage or disengage energy power saving by pressing a button
+            Args: event, click event
+            '''
             if toggle.var.get() == 0:
                 toggle.config(relief="sunken", bg="green")
                 toggle.var.set(1)
@@ -341,6 +350,8 @@ class ClimateControlGUI():
     def show_notification_extreme_weather(self, message):
         '''
         Display a notification message in the GUI.
+        Args: self
+              message (str): A string to be displayed in the notification message 
         '''
         notification_window = Toplevel(self.root)
         notification_window.title("Weather Alert")
