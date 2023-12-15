@@ -24,7 +24,7 @@ Reduce energy usage and enhance environmental sustainability.
 
 1. Clone the repository to your RaspberryPi.
     In bash
-    git clone [git@github.ubc.ca/MECH-524-101-2023W1/weather_station_project.git](https://github.ubc.ca/MECH-524-101-2023W1/weather_station_project). 
+    git clone [git@github.ubc.ca/MECH-524-101-2023W1/weather_station_project.git](https://github.ubc.ca/MECH-524-101-2023W1/weather_station_project).
 2. Set up the required hardware components as specified in the *documentation* provided.
 3. Update your RaspberryPi over an internet connection using the following codes:
                     *sudo apt-get update*
