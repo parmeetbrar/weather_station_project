@@ -28,7 +28,7 @@ class Camera:
 
     def __init__(self, picture_interval_seconds):
         '''
-        Contructor method for initializing the camera with a specified interval for timed picture taking
+        Contructor for initializing the camera with a specified interval for timed picture taking
         Arguments:  self
                     picture_interval_seconds (float): Defines interval in seconds      
         '''
@@ -44,7 +44,7 @@ class Camera:
         '''
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"/home/Pi/Pictures/day_night/image_{timestamp}.jpg"
-        command = f"libcamera-still -o {filename}"
+        command = f"libcamera-still --nopreview -o {filename}"
         try:
             subprocess.run(command, shell=True, check=True)
             print(f"Picture Taken: {filename}")
@@ -115,7 +115,7 @@ class DayAndNightAnalyzer(Camera):
         image = cv2.imread(filename)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         avg_brightness = np.mean(gray)
-
+        print(avg_brightness)
         # LED PWM Configuration
         duty_cycle = max(0, min(100,100 - avg_brightness))
         self.pwm.ChangeDutyCycle(duty_cycle)
