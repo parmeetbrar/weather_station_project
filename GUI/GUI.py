@@ -4,9 +4,10 @@
 # File: Graphical User Interface (GUI)
 
 # Author: Parmeet Brar
-# Purpose:       
-# Description: 
-# Date last edited: 2023/12/12
+# Purpose: Main program for GUI
+# Description:  Contains all variables and functions for GUI. Set up variable for main function to input data. Create a
+#               ClimateControlGUI class, set up the framework and functions for updating the GUI data
+# Date last edited: 2023/12/16
 
 #######################################################################################################################
 
@@ -28,8 +29,12 @@ refresh_time = None
 image_path = None
 sky_conditions = None
 indoor_desired_temperature = None
-# Threshholds
+energy_saving_mode = False
+heater_state = False
+ac_state = False
+auto_state = False
 
+# Threshholds
 EXTREME_TEMPERATURE_THRESHOLD = (500, 600)  # Example range in Celsius
 EXTREME_HUMIDITY_THRESHOLD = (500, 500)  # Example range in percentage
 EXTREME_PRESSURE_THRESHOLD = (9800, 10200)  # Example range in hPa
@@ -54,9 +59,6 @@ class ClimateControlGUI():
         self.create_image_frame()
         self.create_refresh_rate_frame()
         self.create_refresh_display()
-        self.create_refresh_button_up()
-        self.create_refresh_button_down()
-        self.create_refresh_button()
 
     def setup_grid(self):
         '''Set up row and column configuration'''
@@ -126,16 +128,6 @@ class ClimateControlGUI():
         for i, label in enumerate(self.weather_labels):
             label.grid(row=5, column=i, pady=10, sticky="w")
 
-    def update_indoor_temperature(self,slider_value):
-        '''
-        Function to update indoor temperature display based on slider value
-        Args: slider_value (int): the current value of the temperature adjustment slider.
-        '''
-        global indoor_desired_temperature
-        # Add code for desired temperature
-        indoor_desired_temperature = self.desired_temperature_var.get()
-        pass
-
     def create_indoor_frame(self):
         '''Create and setup the indoor frame.'''
         self.indoor_frame = LabelFrame(self.root, text="INDOOR", font=("Helvetica", 16), padx=10, pady=10)
@@ -151,7 +143,11 @@ class ClimateControlGUI():
         self.indoor_frame.grid_columnconfigure(1, weight=1)
 
     def add_indoor_components(self):
-        '''Add components for displaying current indoor temperature, adjusting temperature, and desired temperature.'''
+        '''
+        Add components for displaying current indoor temperature, adjusting temperature, and desired temperature.
+        Toggles are added for an auto switch and power saving mode. Current states of the ac, heater and lighting are
+        displayed.
+        '''
         Label(self.indoor_frame, text="Current Temperature:").grid(row=0, column=0, sticky="e")
         current_temp_display = Label(self.indoor_frame, textvariable=self.current_temp_var, width=20)
         current_temp_display.grid(row=0, column=1, sticky="w")
@@ -161,19 +157,91 @@ class ClimateControlGUI():
         desired_temp_display.grid(row=1, column=1, sticky="w")
 
         Label(self.indoor_frame, text="Desired Temperature:").grid(row=2, column=0, sticky="e")
-        Scale(self.indoor_frame, from_=0, to=40, orient=HORIZONTAL, variable=self.desired_temperature_var,
+        Scale(self.indoor_frame, from_=0, to=40, orient=HORIZONTAL, variable=int(),
             command=self.update_indoor_temperature).grid(row=2, column=1, sticky="ew")
 
-        # Indoor toggle switches
-        toggle_texts = ["Auto", "Heat On", "AC", "Auto Lights"]
-        for i, text in enumerate(toggle_texts):
-            toggle = self.create_toggle(self.indoor_frame, text)
-            toggle.grid(row=i+3, column=0, columnspan=2, sticky="ew")
-        
+        # Indoor toggle
+        # On off switch
+        on_off_toggle = self.create_on_off_toggle(self.indoor_frame, "Auto")
+        on_off_toggle.grid(row=3, column=0, columnspan=2, sticky="ew")
+        # Heater
+        self.heater_toggle = self.create_actuator_toggle(self.indoor_frame, "Heater",heater_state)
+        self.heater_toggle.grid(row=4, column=0, columnspan=2, sticky="ew")
+        # AC
+        self.ac_toggle = self.create_actuator_toggle(self.indoor_frame, "AC", ac_state)
+        self.ac_toggle.grid(row=5, column=0, columnspan=2, sticky="ew")
+        # Indoor lighting
+        toggle = self.create_on_off_toggle(self.indoor_frame, "Auto Lights")
+        toggle.grid(row=6, column=0, columnspan=2, sticky="ew")
         # Toggle switch for power saving mode
         self.energy_saving_toggle = self.create_energy_saving_toggle(self.indoor_frame, "Energy Saving Mode")
         self.energy_saving_toggle.grid(row=10, column=0, columnspan=2, sticky="ew")
     
+    def update_indoor_temperature(self,value):
+        '''
+        Function to update indoor temperature display based on slider value
+        Args: slider_value (int): the current value of the temperature adjustment slider.
+        '''
+        global indoor_desired_temperature
+        # Add code for desired temperature
+        indoor_desired_temperature = value
+    
+    def create_on_off_toggle(self, parent, text):
+        '''
+        Create a toggle switch button for the auto buttton.
+        Args: parent: The parent frame or widget.
+              text: The text to display on the toggle switch (str).
+        Returns: toggle: The toggle switch button.
+        '''
+        var = IntVar(value=0)
+        toggle = Label(parent, text=text, relief="raised", width=8, bg="red")
+        toggle.var = var
+
+        def on_click(event):
+            '''
+            Event handler for the toggle switch button click. This method changes the relief and background
+            color of the toggle switch button based on its current state.
+            Args: event: The click event triggering the method.
+            '''
+            global auto_state
+            if toggle.var.get() == 0:
+                toggle.config(relief="sunken", bg="green")
+                toggle.var.set(1)
+                auto_state = True
+            else:
+                toggle.config(relief="raised", bg="red")
+                toggle.var.set(0)
+                auto_state = False
+
+        toggle.bind("<Button-1>", on_click)
+        return toggle
+    
+    def create_actuator_toggle(self, parent, text, actuator_state):
+        '''
+        Create a toggle for the actuator.
+        Args: parent: The parent frame or widget.
+              text: The text to display on the toggle switch (str).
+              actuator_state: current state of the actuator (bool)
+        Returns: toggle: The toggle switch button.
+        '''
+        toggle = Label(parent, text=text, relief="raised", width=8, bg="red")
+        
+        self.update_actuator_toggle(toggle,actuator_state)
+        return toggle
+    
+    def update_actuator_toggle(self,toggle,actuator_state):
+            '''
+            Event handler for the toggle switch button click. This method changes the relief and background
+            color of the toggle switch button based on its current state.
+            Args: event: The click event triggering the method.
+            '''
+            if actuator_state: # change display base on state
+                toggle.config(relief="sunken", bg="green")
+            else:
+                toggle.config(relief="raised", bg="red")
+    
+
+
     def create_energy_saving_toggle(self, parent, text):
         '''
         Function to create a toggle switch button for energy-saving mode
@@ -205,14 +273,16 @@ class ClimateControlGUI():
     def activate_energy_saving_mode(self):
         '''Activates energy saving mode by changing GUI colors and increasing refresh interval.'''
         self.root.config(bg='dark grey')  # Simulate reduced brightness
-        global refresh_time
+        global refresh_time, energy_saving_mode
+        energy_saving_mode = True
         refresh_time = max(refresh_time, 1800000)  # Set a minimum 30-minute refresh interval
         self.refresh_time_var.set(f"{refresh_time/1000} s")
 
     def deactivate_energy_saving_mode(self):
         '''Deactivates energy saving mode by reverting GUI colors and refresh interval.'''
         self.root.config(bg='light grey')  # Revert to normal brightness
-        global refresh_time
+        global refresh_time, energy_saving_mode
+        energy_saving_mode = False
         refresh_time = 5000  # Reset to default refresh interval
         self.refresh_time_var.set(f"{refresh_time/1000} s")            
 
@@ -250,22 +320,24 @@ class ClimateControlGUI():
         desired_refresh_rate_display = Label(self.refresh_rate_frame, textvariable=self.refresh_time_var, width=4)
         desired_refresh_rate_display.grid(row=2, column=4, columnspan=5, sticky="ew",pady=4)
 
-    def create_refresh_button_up(self):
-        '''Create refresh button.'''
+        '''Create refresh button increase refresh time.'''
         self.refresh_rate_up = Button(self.refresh_rate_frame, text="▲", command=self.increase_refresh_time)
         self.refresh_rate_up.grid(row=2, column=10, sticky="ew", pady=2)
 
+        ''' Create refresh button fore decrease refresh time.'''
+        self.refresh_rate_down = Button(self.refresh_rate_frame, text="▼", command=self.decrease_refresh_time)
+        self.refresh_rate_down.grid(row=2, column=11, sticky="ew", pady=2)
+
+        '''Create refresh button'''
+        self.refresh_button = Button(self.refresh_rate_frame, text="Refresh Data", command=self.refresh_data)
+        self.refresh_button.grid(row=2, column=12, columnspan=8, sticky="ew", pady=8)
+        
     def increase_refresh_time(self):
         ''' method for increasing refresh time'''
         global refresh_time
         if refresh_time < 120000:
             refresh_time += 1000
             self.refresh_time_var.set(f"{refresh_time/1000} s")
-    
-    def create_refresh_button_down(self):
-        ''' Create refresh button.'''
-        self.refresh_rate_down = Button(self.refresh_rate_frame, text="▼", command=self.decrease_refresh_time)
-        self.refresh_rate_down.grid(row=2, column=11, sticky="ew", pady=2)
 
     def decrease_refresh_time(self):
         '''method for decreasing refresh time'''
@@ -273,11 +345,6 @@ class ClimateControlGUI():
         if refresh_time > 1000:
             refresh_time -= 1000
             self.refresh_time_var.set(f"{refresh_time/1000} s")
-
-    def create_refresh_button(self):
-        '''Create refresh button'''
-        self.refresh_button = Button(self.refresh_rate_frame, text="Refresh Data", command=self.refresh_data)
-        self.refresh_button.grid(row=2, column=12, columnspan=8, sticky="ew", pady=8)
 
     def refresh_data(self):
         '''Method to refresh data using most recent data'''
@@ -287,11 +354,16 @@ class ClimateControlGUI():
         self.outdoor_pressure_var.set(f"{pressure_outdoor} hPa")
         self.outdoor_air_quality.set(f"{air_quality}")
 
-
         # Update indoor temperature display
         self.current_temp_var.set(f"{temp_indoor}°C")
         self.indoor_humidity_var.set(f"{humidity_indoor}%")
-        
+
+        # Update Actuator toggle
+        actuator_toggles = [self.heater_toggle, self.ac_toggle]
+        actuator_state = [heater_state, ac_state]
+        for toggle, state in zip(actuator_toggles, actuator_state):
+            self.update_actuator_toggle(toggle, state) 
+
         # Determine weather conditions based on sensor values
         sky_conditions
         current_conditions = self.determine_weather_condition(temp_outdoor, humidity_outdoor, wind_speed, sky_conditions)
@@ -351,19 +423,6 @@ class ClimateControlGUI():
         if wind_speed > 25:
             conditions.append('wind')
         return conditions
-        
-    def update_camera_image(self, image_path):
-        if image_path:
-            print(f"Updating image with path: {image_path}")    
-            try:
-                img = Image.open(image_path)
-                img = img.resize((760,240), Image.Resampling.LANCZOS)
-                photo = ImageTk.PhotoImage(img)
-                self.camera_canvas.image = photo
-                self.camera_canvas.create_image(380, 120, image=photo)
-                print("Image updated successfully.")
-            except Exception as e:
-                print(f"Error in update_camera_image: {e}")
     
     def update_camera_image(self, image_path):
         ''' 
@@ -413,33 +472,6 @@ class ClimateControlGUI():
         Button(notification_window, text="Dismiss", command=notification_window.destroy).pack()
         '''
         pass
-
-    def create_toggle(self, parent, text):
-        '''
-        Create a toggle switch button with specified text.
-        Args: parent: The parent frame or widget.
-              text: The text to display on the toggle switch (str).
-        Returns: toggle: The toggle switch button.
-        '''
-        var = IntVar(value=0)
-        toggle = Label(parent, text=text, relief="raised", width=8, bg="red")
-        toggle.var = var
-
-        def on_click(event):
-            '''
-            Event handler for the toggle switch button click. This method changes the relief and background
-            color of the toggle switch button based on its current state.
-            Args: event: The click event triggering the method.
-            '''
-            if toggle.var.get() == 0:
-                toggle.config(relief="sunken", bg="green")
-                toggle.var.set(1)
-            else:
-                toggle.config(relief="raised", bg="red")
-                toggle.var.set(0)
-
-        toggle.bind("<Button-1>", on_click)
-        return toggle
 
     def run(self):
         ''' Run the main even loop for the GUI'''

@@ -24,7 +24,6 @@ import random
 import os
 import glob
 from PIL import Image, ImageTk
-
 from Camera.camera_module_new import DayAndNightAnalyzer, Camera
 from Camera.cnn_model_for_pi import RaspiPredictor
 
@@ -41,16 +40,6 @@ sky_conditions = "Unknown"
 model_path = './Camera/cloud_image_model.tflite'
 image_directory = '/home/Pi/Pictures/day_night/'
 picture_interval_seconds = 10
-
-# model_path = '/home/Pi/cloud_image_model.tflite
-# picture_interval_seconds = 60
-# max_images = 20
-# captured_images = []
-# camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds)
-# predictor = RaspiPredictor(model_path)
-
-
-# Functions
 
 # Functions
 def sensor_data_collection():
@@ -146,12 +135,23 @@ def capture_and_predict():
         time.sleep(picture_interval_seconds)
 
 def environment_control():
+    '''
+    Main control for the temperature control unit, used in threadding. initialize the Pin for heater and fan, then
+    continue to execute temperature control if auto is on and base on the indoor and desire temperature, energy
+    saving status
+    '''
     fan_pin = 14  # GPIO pin number for fan
     heater_pin = 15  # GPIO pin number for heater
     fan, heater = temperature_control_unit.tcu_init(fan_pin, heater_pin)  # initialize the fan and heater LED
     tcu = temperature_control_unit.TemperatureControlUnit("TCU", heater, fan)  # Create the tcu class
+    # Keep refreshing the unit base on sensor refresh time
     while True:
-        tcu.temperature_control(indoor_temperature,GUI.indoor_desired_temperature,False)
+        if GUI.auto_state:  # Check Auto button state
+            # Execute the temperature control base on current and desire temperature and energy saving mode status
+            tcu.temperature_control(indoor_temperature,GUI.indoor_desired_temperature,GUI.energy_saving_mode)
+        else:
+            # Turn off heater and fan
+            tcu.set_to_neutral()
         time.sleep(sensor_reading_time)
 
 def main():
