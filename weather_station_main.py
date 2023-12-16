@@ -159,6 +159,7 @@ def main():
     Main function for the weather station project. Initialize all the sensors. Start the multithreading process to
     cocurrently update the GUI and Collect data from sensors and cameras
     '''
+    camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds)
     # Threads for diffrent functionalities 
     thread_app = threading.Thread(target=application)
     thread_update_data = threading.Thread(target=update_data)
@@ -166,7 +167,8 @@ def main():
     thread_sensor_data_collection = threading.Thread(target=sensor_data_collection)
     thread_wind_speed = threading.Thread(target=wind_sensor)
     thread_environment_control = threading.Thread(target = environment_control)
-    
+    thread_lighting_control = threading.Thread(target=camera_analyzer.lighting_control)
+
     # Start all the threads
     thread_app.start()
     thread_update_data.start()
@@ -174,6 +176,7 @@ def main():
     thread_sensor_data_collection.start()
     thread_wind_speed.start()
     thread_environment_control.start()
+    thread_lighting_control.start()
 
 
     # Join all threads
@@ -183,6 +186,8 @@ def main():
     thread_sensor_data_collection.join()
     thread_wind_speed.join()
     thread_environment_control.join()   
+    thread_lighting_control.join()
+
 
 if __name__ == "__main__":
     main()
