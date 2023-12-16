@@ -332,7 +332,8 @@ class ClimateControlGUI():
         Method to determine weather condition based on sensor values
         Args: temp: The temperature value (float)
               humidity: The humidity value (float)
-              wind_speed: The wind speed value 
+              wind_speed: The wind speed value (float)
+              sky_conditions (str): The prediciton value from CNN model
         Return: conditions: A list of weather conditions determined based on the input sensor values
         '''
         conditions = []
@@ -363,6 +364,23 @@ class ClimateControlGUI():
                 print("Image updated successfully.")
             except Exception as e:
                 print(f"Error in update_camera_image: {e}")
+    
+    def update_camera_image(self, image_path):
+        ''' 
+        Updates Image in the image placeholder in the GUI
+        Args: image_path (str): Defines an image_path for the images taken by the camera
+        '''
+        if image_path:
+            print(f"Updating image with path: {image_path}")    
+            try:
+                img = Image.open(image_path)
+                img = img.resize((760,240), Image.Resampling.LANCZOS)
+                photo = ImageTk.PhotoImage(img)
+                self.camera_canvas.image = photo
+                self.camera_canvas.create_image(380, 120, image=photo)
+                print("Image updated successfully.")
+            except Exception as e:
+                print(f"Error in update_camera_image: {e}")    
     
     def check_for_extreme_weather(self):
         ''' Check the current weather data against the thresholds and display notifications for extreme conditions. '''

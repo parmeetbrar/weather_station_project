@@ -41,15 +41,8 @@ sky_conditions = "Unknown"
 model_path = './Camera/cloud_image_model.tflite'
 image_directory = '/home/Pi/Pictures/day_night/'
 picture_interval_seconds = 10
-# Initialization sensor objects and gui
-#bme280_indoor = BME280SensorI2C()
-#bme280_outdoor = BME280SensorI2C()
-#anemometer = Anemometer("anemometer", 1.125, GUI.update_interval, 17)
-#air_quality_outdoor =  AirQualitySensor("air_quality_outdoor", 0)
-# camera_outdoor = Camera()
-# gui = Gui()
 
-
+# model_path = '/home/Pi/cloud_image_model.tflite
 # picture_interval_seconds = 60
 # max_images = 20
 # captured_images = []
@@ -68,14 +61,18 @@ def sensor_data_collection():
     sensor_vector=BME280_sensor.BME280_init()
 
     while True:
+        # Read air quality sensor data
         air_quality = air_quality_sensor.read_sensor_data()
+        # Read outdoor and indoor sensor data
         outdoor_data=sensor_vector[0].read_sensor()
         indoor_data=sensor_vector[1].read_sensor()
+        # Update global variables with sensor readings
         outdoor_temperature = round(outdoor_data.temperature,2)
         outdoor_humidity = round(outdoor_data.humidity,2)
         outdoor_pressure = round(outdoor_data.pressure,2)
         indoor_temperature = round(indoor_data.temperature,2)
         indoor_humidity = round(indoor_data.humidity,2)
+        # Pause to avoid continous reading
         time.sleep(sensor_reading_time)
 
 def wind_sensor():
@@ -85,6 +82,7 @@ def wind_sensor():
     reed_switch_pin = 17  # GPIO pin number for the reed switch
     anemometer = Anemometer("Anemometer", radius, wind_interval, reed_switch_pin)
     while True:
+        # Read wind speed from anemometer
         wind_speed = anemometer.read_sensor_data()
             
 def application():
@@ -105,6 +103,7 @@ def application():
 def update_data():
     '''Collect sensor data base on GUI refresh rate, send the data to GUI file for GUI update.'''
     while True:
+        # Update GUI with sensor data
         GUI.temp_outdoor = outdoor_temperature
         GUI.temp_indoor = indoor_temperature
         GUI.humidity_outdoor = outdoor_humidity
@@ -113,17 +112,22 @@ def update_data():
         GUI.pressure_outdoor = outdoor_pressure
         GUI.air_quality = air_quality
         GUI.sky_conditions = sky_conditions
+        # Pause to match GUI refersh rate
         time.sleep(sensor_reading_time)
-    
+
 def find_latest_file(directory_path):
-    ''' Find the latest file in the directory'''
+    ''' 
+    Find the latest file in the directory
+    Args: director_path (str): Provides a directory path for the image files in jpeg format
+    '''
     list_of_files = glob.glob(directory_path + '/*.jpg')  # Adjust the pattern as needed
     if not list_of_files:  # No files found
         return None
     latest_file = max(list_of_files, key=os.path.getmtime)
     return latest_file
-    
+
 def capture_and_predict():
+    ''' Captures an image of the sky and predicts the sky conditions based on CNN model '''
     global sky_conditions
     click_picture = Camera(picture_interval_seconds)
     predictor = RaspiPredictor(model_path)
@@ -155,25 +159,29 @@ def main():
     Main function for the weather station project. Initialize all the sensors. Start the multithreading process to
     cocurrently update the GUI and Collect data from sensors and cameras
     '''
-    thread1=threading.Thread(target=application)
-    thread2= threading.Thread(target=update_data)
+    # Threads for diffrent functionalities 
+    thread_app = threading.Thread(target=application)
+    thread_update_data = threading.Thread(target=update_data)
+    thread_capture_predict = threading.Thread(target=capture_and_predict)
     thread_sensor_data_collection = threading.Thread(target=sensor_data_collection)
     thread_wind_speed = threading.Thread(target=wind_sensor)
-    thread_capture_predict = threading.Thread(target=capture_and_predict)
     thread_environment_control = threading.Thread(target = environment_control)
     
-    thread1.start()
-    thread2.start()
+    # Start all the threads
+    thread_app.start()
+    thread_update_data.start()
+    thread_capture_predict.start()
     thread_sensor_data_collection.start()
     thread_wind_speed.start()
-    thread_capture_predict.start()
     thread_environment_control.start()
 
-    thread1.join()
-    thread2.join()
+
+    # Join all threads
+    thread_app.join()
+    thread_update_data.join()
+    thread_capture_predict.join()
     thread_sensor_data_collection.join()
     thread_wind_speed.join()
-    thread_capture_predict.join()
     thread_environment_control.join()   
 
 if __name__ == "__main__":
