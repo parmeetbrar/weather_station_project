@@ -36,6 +36,10 @@ indoor_temperature = None
 indoor_humidity = None
 wind_speed = 1
 sensor_reading_time = 1
+sky_conditions = "Unknown"
+model_path = './Camera/cloud_image_model.tflite'
+image_directory = '/home/Pi/Pictures/day_night/'
+picture_interval_seconds = 10
 
 # model_path = '/home/Pi/cloud_image_model.tflite
 # picture_interval_seconds = 60
@@ -103,29 +107,39 @@ def update_data():
         GUI.wind_speed = wind_speed
         GUI.pressure_outdoor = outdoor_pressure
         GUI.air_quality = air_quality
+        GUI.sky_conditions = sky_conditions
         # Pause to match GUI refersh rate
         time.sleep(sensor_reading_time)
 
-def camera_and_predictor():
+def find_latest_file(directory_path):
+    ''' 
+    Find the latest file in the directory
+    Args: director_path (str): Provides a directory path for the image files in jpeg format
+    '''
+    list_of_files = glob.glob(directory_path + '/*.jpg')  # Adjust the pattern as needed
+    if not list_of_files:  # No files found
+        return None
+    latest_file = max(list_of_files, key=os.path.getmtime)
+    return latest_file
 
-    picture_interval_seconds = 60
-    model_path = './Camera/cloud_image_model.tflite'
-    camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds)
+def capture_and_predict():
+    ''' Captures an image of the sky and predicts the sky conditions based on CNN model '''
+    global sky_conditions
+    click_picture = Camera(picture_interval_seconds)
     predictor = RaspiPredictor(model_path)
 
     while True:
-        camera_analyzer.start_timed_pictures()
-        # Wait for a new image to be taken
+        click_picture.take_picture()
+        latest_image_path = find_latest_file(image_directory)
+        if latest_image_path:
+            print(f"Processing image: {latest_image_path}")
+            prediction = predictor.predict_image(latest_image_path)
+            sky_conditions = prediction
+            GUI.image_path = latest_image_path
+            print(f"Latest Prediction: {sky_conditions}")
+        else:
+            print(f"No new Image")
         time.sleep(picture_interval_seconds)
-
-        #Fetching latest image
-        image_files = glob.glob("home/Pi/Pictures/prediction/*.jpg")
-        if image_files:
-            latest_image = max(image_files, key=os.path.getctime)
-            brightness = camera_analyzer.analyze_image(latest_image)
-            prediction = predictor.predict_image(latest_image)
-            gui_app.update_camera_image_and_predict(latest_image, prediction)
-        time.sleep(60)
 
 def main():
     '''
@@ -135,21 +149,21 @@ def main():
     # Threads for diffrent functionalities 
     thread_app = threading.Thread(target=application)
     thread_update_data = threading.Thread(target=update_data)
-    thread_camera_and_predictor = threading.Thread(target = camera_and_predictor)
+    thread_capture_predict = threading.Thread(target=capture_and_predict)
     thread_sensor_data_collection = threading.Thread(target=sensor_data_collection)
     thread_wind_speed = threading.Thread(target=wind_sensor)
     
     # Start all the threads
     thread_app.start()
     thread_update_data.start()
-    thread_camera_and_predictor.start()
+    thread_capture_predict.start()
     thread_sensor_data_collection.start()
     thread_wind_speed.start()
 
     # Join all threads
     thread_app.join()
     thread_update_data.join()
-    thread_camera_and_predictor.join()
+    thread_capture_predict.join()
     thread_sensor_data_collection.join()
     thread_wind_speed.join()
     
