@@ -23,7 +23,7 @@ class TemperatureControlUnit(Actuator):
     '''Main class for the temperature control unit. Contains methods for initialization and switching states and '''
     def __init__(self,name,heater,fan):
         '''
-		Constructor of the TemperatureControlUnit class
+		Constructor of the TemperatureControlUnit classs
 		Arguments:	Name of the sensor for base class constructor (str)
 					heater unit (a LED for demonstration purpose)  (LED class)
 					cooler unit (a LED for demonstration purpose)  (LED class)
@@ -32,34 +32,37 @@ class TemperatureControlUnit(Actuator):
         self.heater=heater
         self.fan=fan
         # Set the states of the unit
-        self.state={1:CoolingCycle(),2:NeutralCycle(),3:HeatingCycle()}
+        self.state=[CoolingCycle(), NeutralCycle(), HeatingCycle()]
         # Set initial state as neutral
         self.current_state=self.state[1]
         self.current_state.execute(heater,fan)
     
     def temperature_control(self, current_temp,desired_temp,power_saver:bool):
-        '''Main control '''
+        '''
+        Main control of the unit, choose the states based on current temperature and the desired temperature
+        '''
         temp_diff = 5 if power_saver else 0 
-        match self.current_state:
-            # Cooling State
-            case self.state.get(1):
-                if current_temp > (desired_temp + temp_diff - 1):
-                    self.set_to_neutral()
+        if current_temp is not None and desired_temp is not None:
+            match self.current_state:
+                # Cooling State
+                case CoolingCycle():
+                    if current_temp < (desired_temp + temp_diff - 1):
+                        self.set_to_neutral()
 
-            # Neutral State
-            case self.state.get(2):
-                if current_temp > (desired_temp + temp_diff + 3):
-                    self.set_to_cool()
-                elif current_temp < (desired_temp - temp_diff - 3):
-                    self.set_to_heat()
-                else:
-                    pass
+                # Neutral State
+                case NeutralCycle():
+                    if current_temp > (desired_temp + temp_diff + 3):
+                        self.set_to_cool()
+                    elif current_temp < (desired_temp - temp_diff - 3):
+                        self.set_to_heat()
+                    else:
+                        pass
 
-            # Heating State
-            case self.state.get(3):
-                if current_temp < (desired_temp - temp_diff + 1):
-                    self.set_to_neutral()
-        
+                # Heating State
+                case HeatingCycle():
+                    if current_temp > (desired_temp - temp_diff + 1):
+                        self.set_to_neutral()
+    
     def set_to_cool(self):
         '''Set unit to cooling state'''
         self.current_state=self.state[0]
@@ -78,8 +81,8 @@ class TemperatureControlUnit(Actuator):
 
 class State:
     '''Parent class for the state machine. Contain methods for override in child class'''
-    def execute(self,heater,fan):
-        print("This method should be overridden by sub-classes")
+    def execute(self):
+        pass
 
 class HeatingCycle(State):
     '''Child class for the state machine. Contain methods for heating state operation'''
@@ -139,8 +142,8 @@ def main():
     Create a function for testing the temperature control unit, it will initialize the unit, switch to cooling state
     for 1 sec, then 1 sec in neutral state, 1 sec in heating state, and repeat.
     '''
-    fan_pin = 17  # GPIO pin number for fan
-    heater_pin = 18  # GPIO pin number for heater
+    fan_pin = 14  # GPIO pin number for fan
+    heater_pin = 15  # GPIO pin number for heater
     fan, heater = tcu_init(fan_pin, heater_pin)  # initialize the fan and heater LED
     tcu = TemperatureControlUnit("TCU", heater, fan)  # Create the tcu class
     wait_time=1  # set wait time

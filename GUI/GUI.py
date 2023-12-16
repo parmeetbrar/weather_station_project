@@ -25,7 +25,9 @@ wind_speed = None
 air_quality = None
 pressure_outdoor = None
 refresh_time = None
-
+image_path = None
+sky_conditions = None
+indoor_desired_temperature = None
 # Threshholds
 
 EXTREME_TEMPERATURE_THRESHOLD = (500, 600)  # Example range in Celsius
@@ -76,6 +78,7 @@ class ClimateControlGUI():
         self.current_temp_var = StringVar()
         self.indoor_humidity_var = StringVar()
         self.refresh_time_var = StringVar()
+        self.desired_temperature_var = IntVar()
 
     def load_images(self):
         '''Load weather condition symbols.'''
@@ -128,8 +131,9 @@ class ClimateControlGUI():
         Function to update indoor temperature display based on slider value
         Args: slider_value (int): the current value of the temperature adjustment slider.
         '''
+        global indoor_desired_temperature
         # Add code for desired temperature
-        #self.desired_temp_var.set(f"{slider_value}°C")
+        indoor_desired_temperature = self.desired_temperature_var.get()
         pass
 
     def create_indoor_frame(self):
@@ -157,7 +161,7 @@ class ClimateControlGUI():
         desired_temp_display.grid(row=1, column=1, sticky="w")
 
         Label(self.indoor_frame, text="Desired Temperature:").grid(row=2, column=0, sticky="e")
-        Scale(self.indoor_frame, from_=0, to=40, orient=HORIZONTAL, variable=IntVar(),
+        Scale(self.indoor_frame, from_=0, to=40, orient=HORIZONTAL, variable=self.desired_temperature_var,
             command=self.update_indoor_temperature).grid(row=2, column=1, sticky="ew")
 
         # Indoor toggle switches
@@ -215,7 +219,7 @@ class ClimateControlGUI():
     def create_image_frame(self):
         '''Create and set up the frame for displaying camera images.'''
         self.image_frame = LabelFrame(self.root, text="Camera Image", font=("Helvetica", 16), padx=10, pady=10)
-        self.image_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
+        self.image_frame.grid(row=2, column=0, columnspan=3, sticky="nsew", padx=10, pady=10)
         self.configure_image_frame()
 
     def configure_image_frame(self):
@@ -289,7 +293,8 @@ class ClimateControlGUI():
         self.indoor_humidity_var.set(f"{humidity_indoor}%")
         
         # Determine weather conditions based on sensor values
-        current_conditions = self.determine_weather_condition(temp_outdoor, humidity_outdoor, wind_speed)
+        sky_conditions
+        current_conditions = self.determine_weather_condition(temp_outdoor, humidity_outdoor, wind_speed, sky_conditions)
 
         # Check for extreme weather conditions
         self.check_for_extreme_weather()
@@ -303,6 +308,8 @@ class ClimateControlGUI():
         for label in self.weather_labels[len(current_conditions):]:
             label.config(image='')
             label.image = None
+        
+        self.update_camera_image(image_path)
 
     def self_update(self):
         '''This function updates the values on the GUI based on the defined refersh rate.'''
@@ -320,7 +327,7 @@ class ClimateControlGUI():
         img = img.resize(size, Image.Resampling.LANCZOS)
         return ImageTk.PhotoImage(img)
 
-    def determine_weather_condition(self, temp, humidity, wind_speed):
+    def determine_weather_condition(self, temp, humidity, wind_speed, sky_conditions):
         '''
         Method to determine weather condition based on sensor values
         Args: temp: The temperature value (float)
@@ -329,17 +336,33 @@ class ClimateControlGUI():
         Return: conditions: A list of weather conditions determined based on the input sensor values
         '''
         conditions = []
-        if temp > 25:
+        if sky_conditions == 'Clear':
             conditions.append('sunny')
-        elif temp < 5:
-            conditions.append('cold')
-        if humidity > 80:
-            conditions.append('rain')
-        elif humidity > 70:
-            conditions.append('cloud')
+        else:
+            if temp > 25:
+                conditions.append('sunny')
+            elif temp < 5:
+                conditions.append('cold')
+            if humidity > 80 or sky_conditions == 'Rainy':
+                conditions.append('rain')
+            elif humidity > 70 or sky_conditions == 'Cloudy':
+                conditions.append('cloud')
         if wind_speed > 25:
             conditions.append('wind')
         return conditions
+        
+    def update_camera_image(self, image_path):
+        if image_path:
+            print(f"Updating image with path: {image_path}")    
+            try:
+                img = Image.open(image_path)
+                img = img.resize((760,240), Image.Resampling.LANCZOS)
+                photo = ImageTk.PhotoImage(img)
+                self.camera_canvas.image = photo
+                self.camera_canvas.create_image(380, 120, image=photo)
+                print("Image updated successfully.")
+            except Exception as e:
+                print(f"Error in update_camera_image: {e}")
     
     def check_for_extreme_weather(self):
         ''' Check the current weather data against the thresholds and display notifications for extreme conditions. '''
