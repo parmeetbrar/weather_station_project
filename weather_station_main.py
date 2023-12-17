@@ -43,24 +43,32 @@ picture_interval_seconds = 10
 
 # Functions
 def sensor_data_collection():
+    '''
+    Function for collection data from BEM280 sensor and air quality sensor. Initialize the sensors, the while loop
+    will be run as a thread for continuous data collection. Sampling frequency will be determined by global variable
+    sensor_reading_time. The collected data will be saved as a global variable for another thread to send data to GUI.
+    '''
+    # Store data as global variables
     global air_quality,outdoor_temperature,outdoor_humidity,outdoor_pressure
     global indoor_temperature,indoor_humidity
+    # Initialize the air quality sensor
     air_quality_sensor = AirQualitySensor("Air Quality Sensor", 0)
+    # Initialize the BME280 sensor
     # 1. Outdoor sensor 2. Indoor sensor
     sensor_vector=BME280_sensor.BME280_init()
 
-    while True:
+    while True: # Main loop for collecting and storing data from sensor
         # Read air quality sensor data
         air_quality = air_quality_sensor.read_sensor_data()
         # Read outdoor and indoor sensor data
-        outdoor_data=sensor_vector[0].read_sensor()
-        indoor_data=sensor_vector[1].read_sensor()
+        outdoor_data=sensor_vector[0].read_sensor_data()
+        indoor_data=sensor_vector[1].read_sensor_data()
         # Update global variables with sensor readings
-        outdoor_temperature = round(outdoor_data.temperature,2)
-        outdoor_humidity = round(outdoor_data.humidity,2)
-        outdoor_pressure = round(outdoor_data.pressure,2)
-        indoor_temperature = round(indoor_data.temperature,2)
-        indoor_humidity = round(indoor_data.humidity,2)
+        outdoor_temperature = round(outdoor_data[0],2)
+        outdoor_humidity = round(outdoor_data[2],2)
+        outdoor_pressure = round(outdoor_data[1],2)
+        indoor_temperature = round(indoor_data[0],2)
+        indoor_humidity = round(indoor_data[2],2)
         # Pause to avoid continous reading
         time.sleep(sensor_reading_time)
 
@@ -144,6 +152,7 @@ def environment_control():
     heater_pin = 15  # GPIO pin number for heater
     fan, heater = temperature_control_unit.tcu_init(fan_pin, heater_pin)  # initialize the fan and heater LED
     tcu = temperature_control_unit.TemperatureControlUnit("TCU", heater, fan)  # Create the tcu class
+    
     # Keep refreshing the unit base on sensor refresh time
     while True:
         if GUI.auto_state:  # Check Auto button state
