@@ -3,11 +3,17 @@
 # Project: Weather Station Project
 # File: Graphical User Interface (GUI)
 
-# Author: Parmeet Brar
-# Purpose: Main program for GUI
-# Description:  Contains all variables and functions for GUI. Set up variable for main function to input data. Create a
-#               ClimateControlGUI class, set up the framework and functions for updating the GUI data
-# Date last edited: 2023/12/16
+# Author:           Parmeet Brar, Ho Wun Ng, Priyanshu Bheteja
+# Purpose:          This program develops the climate control GUI class for the weather station. The objectiv of this 
+#                   class is to establish a robust framwork by defining the main ClimateControlGUI class, responsable 
+#                   for managing and updating the GUIdata
+# Description:      The Weather Station GUI is a critical component of the project, providing a user-friendly interface 
+#                   for monitoring and controlling various weather-related parameters. The program initializes essential 
+#                   variables and functions, including the setup of the primary ClimateControlGUI class. This class is 
+#                   responsible for creating the framework and implementing functions to update the graphical user 
+#                   interface with real-time weather data. The GUI serves as the central hub for displaying outdoor and 
+#                   indoor weather conditions, controlling climate devices, and interacting with the user.
+# Date last edited: 2023/12/18
 
 #######################################################################################################################
 
@@ -33,12 +39,6 @@ energy_saving_mode = False
 heater_state = False
 ac_state = False
 auto_state = False
-
-# Threshholds
-EXTREME_TEMPERATURE_THRESHOLD = (500, 600)  # Example range in Celsius
-EXTREME_HUMIDITY_THRESHOLD = (500, 500)  # Example range in percentage
-EXTREME_PRESSURE_THRESHOLD = (9800, 10200)  # Example range in hPa
-
 
 # Classes
 class ClimateControlGUI():
@@ -188,7 +188,7 @@ class ClimateControlGUI():
     
     def create_on_off_toggle(self, parent, text):
         '''
-        Create a toggle switch button for the auto buttton.
+        Create a toggle switch for an automatic control feature.
         Args: parent: The parent frame or widget.
               text: The text to display on the toggle switch (str).
         Returns: toggle: The toggle switch button.
@@ -199,7 +199,7 @@ class ClimateControlGUI():
 
         def on_click(event):
             '''
-            Event handler for the toggle switch button click. This method changes the relief and background
+            Event handler for the toggle switch click. This method changes the relief and background
             color of the toggle switch button based on its current state.
             Args: event: The click event triggering the method.
             '''
@@ -240,8 +240,6 @@ class ClimateControlGUI():
             else:
                 toggle.config(relief="raised", bg="red")
     
-
-
     def create_energy_saving_toggle(self, parent, text):
         '''
         Function to create a toggle switch button for energy-saving mode
@@ -440,38 +438,6 @@ class ClimateControlGUI():
                 print("Image updated successfully.")
             except Exception as e:
                 print(f"Error in update_camera_image: {e}")    
-    
-    def check_for_extreme_weather(self):
-        ''' Check the current weather data against the thresholds and display notifications for extreme conditions. '''
-        temp = float(self.outdoor_temp_var.get().rstrip('°C'))
-        humidity = float(self.outdoor_humidity_var.get().rstrip('%'))
-        pressure = float(self.outdoor_pressure_var.get().rstrip(' hPa'))
-
-        message = ""
-        if not (EXTREME_TEMPERATURE_THRESHOLD[0] <= temp <= EXTREME_TEMPERATURE_THRESHOLD[1]):
-            message += f"Extreme Temperature Alert: {temp}°C\n"
-        if not (EXTREME_HUMIDITY_THRESHOLD[0] <= humidity <= EXTREME_HUMIDITY_THRESHOLD[1]):
-            message += f"Extreme Humidity Alert: {humidity}%\n"
-        if not (EXTREME_PRESSURE_THRESHOLD[0] <= pressure <= EXTREME_PRESSURE_THRESHOLD[1]):
-            message += f"Extreme Pressure Alert: {pressure} hPa\n"
-
-        if message:
-            self.show_notification_extreme_weather(message)
-
-    def show_notification_extreme_weather(self, message):
-        '''
-        Display a notification message in the GUI.
-        Args: self
-              message (str): A string to be displayed in the notification message 
-        '''
-        '''
-        notification_window = Toplevel(self.root)
-        notification_window.title("Weather Alert")
-        notification_window.geometry("300x200")
-        Label(notification_window, text=message, justify=LEFT).pack(pady=20)
-        Button(notification_window, text="Dismiss", command=notification_window.destroy).pack()
-        '''
-        pass
 
     def run(self):
         ''' Run the main even loop for the GUI'''
