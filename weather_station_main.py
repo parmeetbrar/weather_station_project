@@ -4,9 +4,15 @@
 # File:             weather_station_main.py
 
 # Author:           Parmeet Brar
-# Purpose:          Main file to run the Weather Station Project    
-# Description:      This file imports and utilizes the sensor classes to read data and update the GUI.
-# Date last edited: 2023/12/9
+# Purpose:          Main file to run the weather station project, employing multithreading to concurrently manage sensor 
+#                   data collection, GUI updates, image capturing and prediction, wind speed monitoring, environmental 
+#                   control, and lighting adjustments.    
+# Description:      This file is the central hub for integrating all functionalities within the Weather Station 
+#                   project. Leveraging multithreading, it allows for parallel execution of tasks, enhancing 
+#                   efficiency and responsiveness. Key responsibilities include real-time sensor data acquisition, 
+#                   updating the graphical user interface (GUI), capturing images for sky condition predictions, 
+#                   monitoring wind speed, and managing environmental and lighting controls. 
+# Date last edited: 2023/12/18
 
 #######################################################################################################################
 
@@ -187,7 +193,6 @@ def main():
     thread_environment_control.start()
     thread_lighting_control.start()
 
-
     # Join all threads
     thread_app.join()
     thread_update_data.join()
@@ -197,9 +202,7 @@ def main():
     thread_environment_control.join()   
     thread_lighting_control.join()
 
-
 if __name__ == "__main__":
     main()
-
 
 ################## End of Code ########################################################################################
