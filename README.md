@@ -46,7 +46,7 @@ Reduce energy usage and enhance environmental sustainability.
     ```bash
          source *your_environment_name*/bin/activate*
     ```
-    
+
       - Virtual Environment:
       A self-contained Python environment that allows you to manage project-specific dependencies and isolate them from the system-wide Python installation. This helps ensure that your project's dependencies do not interfere with other projects or the system, providing a clean and controlled environment for your application
 
