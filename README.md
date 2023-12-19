@@ -1,6 +1,6 @@
 # Weather Station/Smart Home Project
 
-The project utilizes a Raspberry Pi along with some simple sensors to develop a weather station/smart home device. The features of this project present the user with outdoor weather conditions and indoor temperature conditions on a graphical user interface. Additionaly the interface allows the user to control indoor heating, cooling and lighting. The heating, cooling and lighting controls would need to be intigrated with physical control devices in the home this device is being implimented in. The major emphasis is on gathering/analyzing data and control algorithms of indoor conditions.
+The project utilizes a Raspberry Pi along with some simple sensors to develop a weather station/smart home device. The features of this project provide the user with outdoor weather conditions and indoor temperature conditions on a graphical user interface. Additionally the interface allows the user to control indoor heating, cooling and lighting. The heating, cooling and lighting controls would need to be integrated with physical control devices in the home this device is being implemented in. The major emphasis is on gathering/analyzing data and control algorithms of indoor conditions.
 
 ## Features
 
@@ -25,17 +25,32 @@ Reduce energy usage and enhance environmental sustainability.
 1. Clone the repository to your RaspberryPi.
     In bash
     git clone [git@github.ubc.ca/MECH-524-101-2023W1/weather_station_project.git](https://github.ubc.ca/MECH-524-101-2023W1/weather_station_project).
-2. Set up the required hardware components as specified in the *documentation* provided.
+2. Set up the required hardware components as specified in the hardware documentaion.
 3. Update your RaspberryPi over an internet connection using the following codes:
-                    *sudo apt-get update*
-                    *sudo apt-get upgrade*
-4. Install the necessary dependencies (list provided in the documentation)
+
+   ```bash
+         sudo apt-get update
+         sudo apt-get upgrade
+   ```
+
+4. Install and import the necessary external libraries and imports as specified in dependencies.
     In case the dependencies fail to install, create a virtual environment using the terminal and install the dependencies with the virtual environment active.
-    Create a virtual environment using this code:
-                    *python3 -m venv **your_environement_name***
-    Activate the environment using this code:
-                    *source **your_environment_name**/bin/activate*
-5. Run the *main.py* script using RaspberryPi IDE or *main.exe* on the RaspberryPi to start the weather station.
+    Create a virtual environment using this code in the terminal:
+
+   ```bash
+         python3 -m venv *your_environement_name*
+   ```
+
+    Activate the environment using this code in the terminal:
+
+    ```bash
+         source *your_environment_name*/bin/activate*
+    ```
+
+      - Virtual Environment:
+      A self-contained Python environment that allows you to manage project-specific dependencies and isolate them from the system-wide Python installation. This helps ensure that your project's dependencies do not interfere with other projects or the system, providing a clean and controlled environment for your application
+
+5. Run the weather_station_main.py script using RaspberryPi IDE or weather_station.exe on the RaspberryPi to start the weather station.
 
 ## Hardware
 
@@ -48,7 +63,7 @@ Reduce energy usage and enhance environmental sustainability.
 - Resistors
 - Breadboard
 
-## Documentation
+## Dependencies
 
 ### External Libraries
 
@@ -161,6 +176,21 @@ In order to install external libraries, activate your virtual environment and en
    import glob
    ```
 
+## Troubleshooting
+
+If you encounter any issues during the installation or setup process, refer to the following troubleshooting tips:
+
+- **Issue 1:** *Sensor not showing reading on GUI*
+  - **Solutions:**  
+  - Check wiring connections: Ensure that the sensors are properly connected to the Raspberry Pi. Verify that there are no loose connections or wiring issues.
+  - Run individual sensor code: Execute the code for each sensor individually to confirm that the sensors are providing readings. This helps isolate whether the issue is with the sensors or the integration with the GUI.
+
+- **Issue 2:** *GUI not launching or displaying errors*
+  - **Solution:** *Detailed solution or workaround*
+    - Check dependencies: Ensure that all required dependencies, including external libraries and Python packages, are installed correctly. Refer to the 'Dependencies' section  and make sure each library is up-to-date.
+    - Review error messages: If there are error messages when launching the GUI, carefully review them for any specific issues. The error messages can provide valuable information about what went wrong.
+    - Verify system resources: Check if the Raspberry Pi has sufficient resources (CPU, memory) to run the GUI. Inadequate resources can lead to GUI launch failures.
+
 ## License
 
 This project is licensed under the UBC GitHub License.
@@ -175,4 +205,4 @@ This project is licensed under the UBC GitHub License.
 
 1. Parmeet Brar:        Student ID: 20877288
 2. Priyanshu Bhateja:   Student ID: 81567786
-3. Halvard Ng:          Srudent ID: 41277492
+3. Halvard Ng:          Student ID: 41277492
