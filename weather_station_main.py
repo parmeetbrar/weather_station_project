@@ -55,13 +55,13 @@ def sensor_data_collection():
     sensor_reading_time. The collected data will be saved as a global variable for another thread to send data to GUI.
     '''
     # Store data as global variables
-    global air_quality,outdoor_temperature,outdoor_humidity,outdoor_pressure
-    global indoor_temperature,indoor_humidity
+    global air_quality, outdoor_temperature, outdoor_humidity,outdoor_pressure
+    global indoor_temperature, indoor_humidity
     # Initialize the air quality sensor
     air_quality_sensor = AirQualitySensor("Air Quality Sensor", 0)
     # Initialize the BME280 sensor
     # 1. Outdoor sensor 2. Indoor sensor
-    sensor_vector=BME280_sensor.BME280_init()
+    sensor_vector = BME280_sensor.BME280_init()
 
     while True: # Main loop for collecting and storing data from sensor
         # Read air quality sensor data
@@ -70,11 +70,11 @@ def sensor_data_collection():
         outdoor_data=sensor_vector[0].read_sensor_data()
         indoor_data=sensor_vector[1].read_sensor_data()
         # Update global variables with sensor readings
-        outdoor_temperature = round(outdoor_data[0],2)
-        outdoor_humidity = round(outdoor_data[2],2)
-        outdoor_pressure = round(outdoor_data[1],2)
-        indoor_temperature = round(indoor_data[0],2)
-        indoor_humidity = round(indoor_data[2],2)
+        outdoor_temperature = round(outdoor_data[0], 2)
+        outdoor_humidity = round(outdoor_data[2], 2)
+        outdoor_pressure = round(outdoor_data[1], 2)
+        indoor_temperature = round(indoor_data[0], 2)
+        indoor_humidity = round(indoor_data[2], 2)
         # Pause to avoid continous reading
         time.sleep(sensor_reading_time)
 
@@ -163,7 +163,7 @@ def environment_control():
     while True:
         if GUI.auto_state:  # Check Auto button state
             # Execute the temperature control base on current and desire temperature and energy saving mode status
-            tcu.temperature_control(indoor_temperature,GUI.indoor_desired_temperature,GUI.energy_saving_mode)
+            tcu.temperature_control(indoor_temperature, GUI.indoor_desired_temperature, GUI.energy_saving_mode)
             GUI.ac_state = temperature_control_unit.ac_state
             GUI.heater_state = temperature_control_unit.heater_state
         else:
@@ -191,11 +191,11 @@ def main():
     cocurrently update the GUI and Collect data from sensors and cameras
     '''
     # Threads for diffrent functionalities 
-    thread_app = threading.Thread(target=application)
-    thread_update_data = threading.Thread(target=update_data)
-    thread_capture_predict = threading.Thread(target=capture_and_predict)
-    thread_sensor_data_collection = threading.Thread(target=sensor_data_collection)
-    thread_wind_speed = threading.Thread(target=wind_sensor)
+    thread_app = threading.Thread(target = application)
+    thread_update_data = threading.Thread(target = update_data)
+    thread_capture_predict = threading.Thread(target = capture_and_predict)
+    thread_sensor_data_collection = threading.Thread(target = sensor_data_collection)
+    thread_wind_speed = threading.Thread(target = wind_sensor)
     thread_environment_control = threading.Thread(target = environment_control)
     thread_lighting_control = threading.Thread(target = light_control)
 

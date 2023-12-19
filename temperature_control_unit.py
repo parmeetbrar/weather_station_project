@@ -8,7 +8,7 @@
 # Description:      Create a TemperatureControlUnit class. The unit will be a state machine where it has three states,
 #                   heating cycle, neutral cycle and cooling cycle. Each state has been defined as a subclass of the
 #                   state class. Each of them will adjust to turn the fan and heater on and off.
-# Date last edited: 2023/12/6
+# Date last edited: 2023/12/19
 
 #######################################################################################################################
 
@@ -25,23 +25,23 @@ heater_state = False
 # Classes
 class TemperatureControlUnit(Actuator):
     '''Main class for the temperature control unit. Contains methods for initialization and switching states and '''
-    def __init__(self,name,heater,fan):
+    def __init__(self, name, heater, fan):
         '''
-		Constructor of the TemperatureControlUnit classs
+		Constructor of the TemperatureControlUnit class
 		Arguments:	Name of the sensor for base class constructor (str)
 					heater unit (a LED for demonstration purpose)  (LED class)
 					cooler unit (a LED for demonstration purpose)  (LED class)
 		'''
         super().__init__(name)
-        self.heater=heater
-        self.fan=fan
+        self.heater = heater
+        self.fan = fan
         # Set the states of the unit
-        self.state=[CoolingCycle(), NeutralCycle(), HeatingCycle()]
+        self.state = [CoolingCycle(), NeutralCycle(), HeatingCycle()]
         # Set initial state as neutral
-        self.current_state=self.state[1]
-        self.current_state.execute(heater,fan)
+        self.current_state = self.state[1]
+        self.current_state.execute(heater, fan)
     
-    def temperature_control(self, current_temp,desired_temp,power_saver:bool):
+    def temperature_control(self, current_temp, desired_temp, power_saver : bool):
         '''
         Main control of the unit, choose the states based on current temperature and the desired temperature
         '''
@@ -55,7 +55,7 @@ class TemperatureControlUnit(Actuator):
                     self.set_to_neutral()
                     ac_state = False
 
-                # Neutral State
+            # Neutral State
             elif self.current_state is self.state[1]:
                     if current_temp > (desired_temp + temp_diff + 3):
                         self.set_to_cool()
@@ -66,7 +66,7 @@ class TemperatureControlUnit(Actuator):
                     else:
                         pass
 
-                # Heating State
+            # Heating State
             elif self.current_state is self.state[2]:
                     if current_temp > (desired_temp - temp_diff + 1):
                         self.set_to_neutral()
@@ -74,18 +74,18 @@ class TemperatureControlUnit(Actuator):
     
     def set_to_cool(self):
         '''Set unit to cooling state'''
-        self.current_state=self.state[0]
-        self.current_state.execute(self.heater,self.fan)
+        self.current_state = self.state[0]
+        self.current_state.execute(self.heater, self.fan)
 
     def set_to_neutral(self):
         '''Set unit to neutral state'''
-        self.current_state=self.state[1]
-        self.current_state.execute(self.heater,self.fan)
+        self.current_state = self.state[1]
+        self.current_state.execute(self.heater, self.fan)
 
     def set_to_heat(self):
         '''Set unit to heating state'''
-        self.current_state=self.state[2]
-        self.current_state.execute(self.heater,self.fan)
+        self.current_state = self.state[2]
+        self.current_state.execute(self.heater, self.fan)
 		
 
 class State:
@@ -95,7 +95,7 @@ class State:
 
 class HeatingCycle(State):
     '''Child class for the state machine. Contain methods for heating state operation'''
-    def execute(self,heater,fan):
+    def execute(self, heater, fan):
         '''
 		Change the state of the machine to heating cycle
 		Arguments:	Name of the sensor for base class constructor (str)
@@ -108,7 +108,7 @@ class HeatingCycle(State):
 
 class CoolingCycle(State):
     '''Child class for the state machine. Contain methods for cooling state operation'''
-    def execute(self,heater,fan):
+    def execute(self, heater, fan):
         '''
 		Change the state of the machine to cooling cycle
 		Arguments:	Name of the sensor for base class constructor (str)
@@ -121,7 +121,7 @@ class CoolingCycle(State):
 
 class NeutralCycle(State):
     '''Child class for the state machine. Contain methods for neutral state operation'''
-    def execute(self,heater,fan):
+    def execute(self, heater, fan):
         '''
 		Change the state of the machine to neutral cycle
 		Arguments:	Name of the sensor for base class constructor (str)
@@ -141,8 +141,8 @@ def tcu_init(fan_pin, heater_pin):
     Return:     Fan as a LED class (LED)
                 Heater as a LED class (LED)
     '''
-    fan=LED(fan_pin)
-    heater=LED(heater_pin)
+    fan = LED(fan_pin)
+    heater = LED(heater_pin)
     return(fan, heater)
 
 # For testing purposes
@@ -155,7 +155,7 @@ def main():
     heater_pin = 15  # GPIO pin number for heater
     fan, heater = tcu_init(fan_pin, heater_pin)  # initialize the fan and heater LED
     tcu = TemperatureControlUnit("TCU", heater, fan)  # Create the tcu class
-    wait_time=1  # set wait time
+    wait_time = 1  # set wait time
     # Test the circuit, turn on cooler for 1 second, then off for 1 second, them heater for 1 second,
     # repeat until program stop
     while True:
