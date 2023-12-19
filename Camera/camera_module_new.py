@@ -99,8 +99,8 @@ class DayAndNightAnalyzer(Camera):
         Arguments:  self
         ''' 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(17, GPIO.OUT)
-        self.pwm = GPIO.PWM(17, 100)
+        GPIO.setup(18, GPIO.OUT)
+        self.pwm = GPIO.PWM(18, 1000)
 
         # Start with LED off
         self.pwm.start(0) 
