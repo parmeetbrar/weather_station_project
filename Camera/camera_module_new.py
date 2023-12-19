@@ -99,8 +99,8 @@ class DayAndNightAnalyzer(Camera):
         Arguments:  self
         ''' 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(17, GPIO.OUT)
-        self.pwm = GPIO.PWM(17, 100)
+        GPIO.setup(18, GPIO.OUT)
+        self.pwm = GPIO.PWM(18, 1000)
 
         # Start with LED off
         self.pwm.start(0) 
@@ -130,7 +130,21 @@ class DayAndNightAnalyzer(Camera):
         self.pwm.stop() # PWM Stoppage
         GPIO.cleanup() #GPIO Cleanup
 
-# Usage Test (Will be included in the main file and removed from here)
+    def lighting_control(self):
+        ''' A method combining essential functions from all methods in this class and produce lighting control '''
+        try:
+            image_files = glob.glob("/home/Pi/Pictures/day_night/*.jpg")
+            if image_files:
+                recent_image = max(image_files, key=os.path.getctime)
+                brightness = self.analyze_image(recent_image)
+                print(f"Brightness: {brightness}")
+            else:
+                print("No Image Found")
+            time.sleep(self.picture_interval_seconds)
+        except KeyboardInterrupt:
+            print("Lighting control stopped")    
+
+# Usage Test
 if __name__ == "__main__":
     camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds=60)
     camera_analyzer.start_timed_pictures()
