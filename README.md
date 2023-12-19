@@ -57,6 +57,7 @@ Reduce energy usage and enhance environmental sustainability.
 - Raspberry Pi 4B
 - BME280 Sensor
 - Adafruit MiCS5524 air quality sensor
+- MCP3008 A2D convertor
 - Magnetic reed switch and magnet
 - 3D printed anemometer
 - Raspberry Pi camera
@@ -64,6 +65,16 @@ Reduce energy usage and enhance environmental sustainability.
 - Jumper cables
 - Resistors
 - Breadboard
+
+### Sensor to Raspberry Pi connections
+
+- BME280 connected to I2C
+- AdaFruit MiCs5524 and MCP3008 A2D connected to SPI
+- Anemometer reed switch connected to pin 17
+- Heating LED GPIO pin 15
+- Cooling LED GPIO pin 14
+- Lighting LED GPIO pin 18
+- Camera connected to CSI port
 
 ## Dependencies
 
