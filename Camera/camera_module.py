@@ -131,19 +131,18 @@ class DayAndNightAnalyzer(Camera):
         GPIO.cleanup() #GPIO Cleanup
 
     def lighting_control(self):
-        ''' A method combining functions from all methods in this class and produce lighting control '''
-        while self.running:
-            try:
-                image_files = glob.glob("/home/Pi/Pictures/day_night/*.jpg")
-                if image_files:
-                    recent_image = max(image_files, key=os.path.getctime)
-                    brightness = self.analyze_image(recent_image)
-                    print(f"Brightness: {brightness}")
-                else:
-                    print("No Image Found")
-                time.sleep(self.picture_interval_seconds)
-            except KeyboardInterrupt:
-                print("Lighting control stopped")    
+        ''' A method combining essential functions from all methods in this class and produce lighting control '''
+        try:
+            image_files = glob.glob("/home/Pi/Pictures/day_night/*.jpg")
+            if image_files:
+                recent_image = max(image_files, key=os.path.getctime)
+                brightness = self.analyze_image(recent_image)
+                print(f"Brightness: {brightness}")
+            else:
+                print("No Image Found")
+            time.sleep(self.picture_interval_seconds)
+        except KeyboardInterrupt:
+            print("Lighting control stopped")    
 
 # Usage Test
 if __name__ == "__main__":

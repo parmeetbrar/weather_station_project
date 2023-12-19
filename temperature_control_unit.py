@@ -18,6 +18,10 @@ from gpiozero import LED
 from actuator import Actuator
 import time
 
+# Global Variable
+ac_state = False
+heater_state = False
+
 # Classes
 class TemperatureControlUnit(Actuator):
     '''Main class for the temperature control unit. Contains methods for initialization and switching states and '''
@@ -41,27 +45,32 @@ class TemperatureControlUnit(Actuator):
         '''
         Main control of the unit, choose the states based on current temperature and the desired temperature
         '''
+        global ac_state, heater_state
         temp_diff = 5 if power_saver else 0 
+        
         if current_temp is not None and desired_temp is not None:
-            match self.current_state:
-                # Cooling State
-                case CoolingCycle():
-                    if current_temp < (desired_temp + temp_diff - 1):
-                        self.set_to_neutral()
+            # Cooling State
+            if self.current_state is self.state[0]:
+                if current_temp < (desired_temp + temp_diff - 1):
+                    self.set_to_neutral()
+                    ac_state = False
 
                 # Neutral State
-                case NeutralCycle():
+            elif self.current_state is self.state[1]:
                     if current_temp > (desired_temp + temp_diff + 3):
                         self.set_to_cool()
+                        ac_state = True
                     elif current_temp < (desired_temp - temp_diff - 3):
                         self.set_to_heat()
+                        heater_state = True
                     else:
                         pass
 
                 # Heating State
-                case HeatingCycle():
+            elif self.current_state is self.state[2]:
                     if current_temp > (desired_temp - temp_diff + 1):
                         self.set_to_neutral()
+                        heater_state = False
     
     def set_to_cool(self):
         '''Set unit to cooling state'''

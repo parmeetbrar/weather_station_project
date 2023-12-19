@@ -157,7 +157,7 @@ class ClimateControlGUI():
         desired_temp_display.grid(row=1, column=1, sticky="w")
 
         Label(self.indoor_frame, text="Desired Temperature:").grid(row=2, column=0, sticky="e")
-        Scale(self.indoor_frame, from_=0, to=40, orient=HORIZONTAL, variable=int(),
+        Scale(self.indoor_frame, from_=0, to=40, orient=HORIZONTAL, variable=self.desired_temperature_var,
             command=self.update_indoor_temperature).grid(row=2, column=1, sticky="ew")
 
         # Indoor toggle
@@ -171,8 +171,8 @@ class ClimateControlGUI():
         self.ac_toggle = self.create_actuator_toggle(self.indoor_frame, "AC", ac_state)
         self.ac_toggle.grid(row=5, column=0, columnspan=2, sticky="ew")
         # Indoor lighting
-        toggle = self.create_on_off_toggle(self.indoor_frame, "Auto Lights")
-        toggle.grid(row=6, column=0, columnspan=2, sticky="ew")
+        self.lighting_toggle = self.create_actuator_toggle(self.indoor_frame, "Auto Lights",auto_state)
+        self.lighting_toggle.grid(row=6, column=0, columnspan=2, sticky="ew")
         # Toggle switch for power saving mode
         self.energy_saving_toggle = self.create_energy_saving_toggle(self.indoor_frame, "Energy Saving Mode")
         self.energy_saving_toggle.grid(row=10, column=0, columnspan=2, sticky="ew")
@@ -184,7 +184,7 @@ class ClimateControlGUI():
         '''
         global indoor_desired_temperature
         # Add code for desired temperature
-        indoor_desired_temperature = value
+        indoor_desired_temperature = int(self.desired_temperature_var.get())
     
     def create_on_off_toggle(self, parent, text):
         '''
@@ -357,17 +357,14 @@ class ClimateControlGUI():
         self.indoor_humidity_var.set(f"{humidity_indoor}%")
 
         # Update Actuator toggle
-        actuator_toggles = [self.heater_toggle, self.ac_toggle]
-        actuator_state = [heater_state, ac_state]
+        actuator_toggles = [self.heater_toggle, self.ac_toggle, self.lighting_toggle]
+        actuator_state = [heater_state, ac_state, auto_state]
         for toggle, state in zip(actuator_toggles, actuator_state):
             self.update_actuator_toggle(toggle, state) 
 
         # Determine weather conditions based on sensor values
         sky_conditions
         current_conditions = self.determine_weather_condition(temp_outdoor, humidity_outdoor, wind_speed, sky_conditions)
-
-        # Check for extreme weather conditions
-        self.check_for_extreme_weather()
 
         # Update the weather condition images
         for label, condition in zip(self.weather_labels, current_conditions):

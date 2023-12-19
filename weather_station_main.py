@@ -164,17 +164,32 @@ def environment_control():
         if GUI.auto_state:  # Check Auto button state
             # Execute the temperature control base on current and desire temperature and energy saving mode status
             tcu.temperature_control(indoor_temperature,GUI.indoor_desired_temperature,GUI.energy_saving_mode)
+            GUI.ac_state = temperature_control_unit.ac_state
+            GUI.heater_state = temperature_control_unit.heater_state
         else:
             # Turn off heater and fan
             tcu.set_to_neutral()
+            GUI.ac_state = False
+            GUI.heater_state = False
+            temperature_control_unit.ac_state = False
+            temperature_control_unit.heater_state = False
         time.sleep(sensor_reading_time)
+
+def light_control():
+    ''' 
+    Light Control for smart brightness adjustment as per daylight conditions, used in threading. If auto is on,
+    the light control is activated
+    '''
+    camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds)
+    while True:
+        if GUI.auto_state:  # Check Auto button state
+            camera_analyzer.lighting_control()    
 
 def main():
     '''
     Main function for the weather station project. Initialize all the sensors. Start the multithreading process to
     cocurrently update the GUI and Collect data from sensors and cameras
     '''
-    camera_analyzer = DayAndNightAnalyzer(picture_interval_seconds)
     # Threads for diffrent functionalities 
     thread_app = threading.Thread(target=application)
     thread_update_data = threading.Thread(target=update_data)
@@ -182,7 +197,7 @@ def main():
     thread_sensor_data_collection = threading.Thread(target=sensor_data_collection)
     thread_wind_speed = threading.Thread(target=wind_sensor)
     thread_environment_control = threading.Thread(target = environment_control)
-    thread_lighting_control = threading.Thread(target=camera_analyzer.lighting_control)
+    thread_lighting_control = threading.Thread(target = light_control)
 
     # Start all the threads
     thread_app.start()
