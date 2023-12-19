@@ -50,7 +50,7 @@ Reduce energy usage and enhance environmental sustainability.
       - Virtual Environment:
       A self-contained Python environment that allows you to manage project-specific dependencies and isolate them from the system-wide Python installation. This helps ensure that your project's dependencies do not interfere with other projects or the system, providing a clean and controlled environment for your application
 
-5. Run the weather_station_main.py script using RaspberryPi IDE or weather_station.exe on the RaspberryPi to start the weather station.
+5. Run the weather_station_main.py script using RaspberryPi IDE or weather_station_main on the RaspberryPi to start the weather station.
 
 ## Hardware
 
@@ -58,8 +58,10 @@ Reduce energy usage and enhance environmental sustainability.
 - BME280 Sensor
 - Adafruit MiCS5524 air quality sensor
 - Magnetic reed switch and magnet
+- 3D printed anemometer
 - Raspberry Pi camera
-- Lead lights
+- LED lights
+- Jumper cables
 - Resistors
 - Breadboard
 
