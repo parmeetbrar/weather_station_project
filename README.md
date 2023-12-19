@@ -46,11 +46,14 @@ Reduce energy usage and enhance environmental sustainability.
     ```bash
          source *your_environment_name*/bin/activate*
     ```
-
+    
       - Virtual Environment:
       A self-contained Python environment that allows you to manage project-specific dependencies and isolate them from the system-wide Python installation. This helps ensure that your project's dependencies do not interfere with other projects or the system, providing a clean and controlled environment for your application
 
 5. Run the weather_station_main.py script using RaspberryPi IDE or weather_station_main on the RaspberryPi to start the weather station.
+6. The GUI is shown below. The indoor environment controls are in the "Indoor" section, the buttons should go from red to green when a function is actiavted. The refresh rate can be adjusted with the up and down arrows beside the refresh rate.
+
+   ![Alt text](GUI_screenshot.png)
 
 ## Hardware
 
