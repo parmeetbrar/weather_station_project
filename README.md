@@ -63,7 +63,7 @@ Reduce energy usage and enhance environmental sustainability.
 - Raspberry Pi camera
 - LED lights
 - Jumper cables
-- Resistors
+- 200 ohm resistors
 - Breadboard
 
 ### Sensor to Raspberry Pi connections
